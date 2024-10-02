@@ -7,7 +7,7 @@ $con = mysqli_connect($host, $user, $pwd, $BD) or die("FALLO DE CONEXION");
 
 
 // Definir el número de resultados por página
-$limite = 10;
+$limite = 7;
 
 // Obtener la página actual desde la URL, si no se define, será la primera página
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
@@ -292,8 +292,6 @@ $total_paginas = ceil($total_records / $limite);
                 </tbody>
             </table>
         <?php } ?>
-
-        <!-- Paginación -->
         <nav aria-label='Paginación'>
             <ul class='pagination justify-content-center'>
                 <?php for ($i = 1; $i <= $total_paginas; $i++) { ?>
