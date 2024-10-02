@@ -1,0 +1,49 @@
+body {
+    margin: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    padding: 5px;
+    background-color: #333;
+    color: white;
+    text-align: center;
+}
+
+.content-wrapper {
+    display: flex;
+    justify-content: center; /* Centra horizontalmente el conjunto de tablas */
+    gap: 20px; /* Añade espacio entre las tablas */
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.Tabla {
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px; /* Define un ancho fijo para cada tabla */
+}
+
+.Tabla input,
+.Tabla select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #1b755a;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.Tabla input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+.Tabla input[type="submit"]:hover {
+    background-color: #45a049;
+}

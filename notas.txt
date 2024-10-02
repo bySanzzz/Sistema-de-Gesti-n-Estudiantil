@@ -1,0 +1,92 @@
+fecha_creacion DATETIME DEFAULT NOW()
+INSERT INTO `alumnos` (`DNI_alumno`, `nombre`, `apellido`, `curso`, `especialidad`, `fechaAlta`, `fechaBaja`, `baja`) VALUES
+(12345078, 'Juan', 'Pérez', '1ro', 'Electrónica', '2024-09-20', NULL, 0),
+(12345079, 'Ana', 'Gómez', '2do', 'Química', '2024-08-15', NULL, 0),
+(12345080, 'Carlos', 'Ramírez', '3ro', 'Informática', '2024-07-10', '2024-09-01', 1),
+(12345081, 'Laura', 'López', '4to', 'Mecánica', '2024-06-20', NULL, 0),
+(12345082, 'Pedro', 'Martínez', '5to', 'Electrónica', '2024-05-25', NULL, 0),
+(12345083, 'Lucía', 'Sánchez', '1ro', 'Química', '2024-04-30', '2024-08-10', 1),
+(12345084, 'Miguel', 'García', '2do', 'Mecánica', '2024-03-15', NULL, 0),
+(12345085, 'Sofía', 'Rodríguez', '3ro', 'Electrónica', '2024-02-20', NULL, 0),
+(12345086, 'Diego', 'Fernández', '4to', 'Informática', '2024-01-05', '2024-03-22', 1),
+(12345087, 'Valentina', 'Suárez', '5to', 'Química', '2024-09-01', NULL, 0),
+(12345088, 'Matías', 'Gómez', '1ro', 'Mecánica', '2024-08-20', NULL, 0),
+(12345089, 'Martina', 'Romero', '2do', 'Electrónica', '2024-07-15', NULL, 0),
+(12345090, 'Nicolás', 'Vega', '3ro', 'Química', '2024-06-10', NULL, 0),
+(12345091, 'Camila', 'Rivas', '4to', 'Informática', '2024-05-05', NULL, 0),
+(12345092, 'Mateo', 'Hernández', '5to', 'Electrónica', '2024-04-01', NULL, 0),
+(12345093, 'Julieta', 'Mendoza', '1ro', 'Mecánica', '2024-03-25', NULL, 0),
+(12345094, 'Tomás', 'Díaz', '2do', 'Informática', '2024-02-15', NULL, 0),
+(12345095, 'Emilia', 'Castro', '3ro', 'Química', '2024-01-25', '2024-04-10', 1),
+(12345096, 'Santiago', 'Navarro', '4to', 'Mecánica', '2024-09-10', NULL, 0),
+(12345097, 'Mía', 'Paredes', '5to', 'Electrónica', '2024-08-30', NULL, 0),
+(12345098, 'Lucas', 'Silva', '1ro', 'Química', '2024-07-20', NULL, 0),
+(12345099, 'Catalina', 'Lara', '2do', 'Mecánica', '2024-06-25', '2024-08-05', 1),
+(12345100, 'Facundo', 'Aguilar', '3ro', 'Informática', '2024-05-20', NULL, 0),
+(12345101, 'Josefina', 'Ponce', '4to', 'Electrónica', '2024-04-15', NULL, 0),
+(12345102, 'Gonzalo', 'Ortiz', '5to', 'Mecánica', '2024-03-10', NULL, 0),
+(12345103, 'Elena', 'Vargas', '1ro', 'Química', '2024-02-05', '2024-03-15', 1),
+(12345104, 'Agustín', 'Morales', '2do', 'Electrónica', '2024-01-30', NULL, 0),
+(12345105, 'Isabella', 'Ramos', '3ro', 'Informática', '2024-09-20', NULL, 0),
+(12345106, 'Thiago', 'Reyes', '4to', 'Química', '2024-08-15', NULL, 0),
+(12345107, 'Paula', 'Sosa', '5to', 'Mecánica', '2024-07-10', NULL, 0),
+(12345108, 'Federico', 'Martín', '1ro', 'Electrónica', '2024-06-05', NULL, 0),
+(12345109, 'Gabriela', 'Muñoz', '2do', 'Informática', '2024-05-01', NULL, 0),
+(12345110, 'Benjamín', 'Paz', '3ro', 'Mecánica', '2024-04-20', NULL, 0),
+(12345111, 'Renata', 'Espinosa', '4to', 'Química', '2024-03-25', '2024-07-15', 1),
+(12345112, 'Maximiliano', 'Escobar', '5to', 'Electrónica', '2024-02-10', NULL, 0),
+(12345113, 'Olivia', 'Valenzuela', '1ro', 'Mecánica', '2024-01-05', NULL, 0),
+(12345114, 'Joaquín', 'Varela', '2do', 'Informática', '2024-09-01', NULL, 0),
+(12345115, 'Zoe', 'Flores', '3ro', 'Química', '2024-08-20', NULL, 0),
+(12345116, 'Alejandro', 'Salinas', '4to', 'Mecánica', '2024-07-10', NULL, 0),
+(12345117, 'Milagros', 'Franco', '5to', 'Electrónica', '2024-06-05', NULL, 0),
+(12345118, 'Ignacio', 'Carrillo', '1ro', 'Informática', '2024-05-01', NULL, 0),
+(12345119, 'Florencia', 'Arias', '2do', 'Química', '2024-04-15', NULL, 0),
+(12345120, 'Alan', 'Blanco', '3ro', 'Electrónica', '2024-03-05', NULL, 0),
+(12345121, 'Victoria', 'Rivera', '4to', 'Mecánica', '2024-02-25', NULL, 0),
+(12345122, 'Rodrigo', 'Maldonado', '5to', 'Química', '2024-01-20', NULL, 0),
+(12345123, 'Antonia', 'Vega', '1ro', 'Informática', '2024-09-10', NULL, 0),
+(12345124, 'Sebastián', 'Palacios', '2do', 'Electrónica', '2024-08-05', NULL, 0),
+(12345125, 'Valeria', 'Ledesma', '3ro', 'Mecánica', '2024-07-01', NULL, 0),
+(12345126, 'Bruno', 'Barrios', '4to', 'Química', '2024-06-10', NULL, 0);
+
+
+<li><a class="nav" href="http://localhost:8080/escuela-local/html/cargaAlumno.php">Alumno</a></li>
+                <li><a class="nav" href="http://localhost:8080/escuela-local/html/cargaProfesores.php">Profesor</a></li>
+                <li><a class="nav" href="http://localhost:8080/escuela-local/html/cargaCurso.php">Curso</a></li>
+                <li><a class="nav" href="http://localhost:8080/escuela-local/html/cargaMateria.php">Materia</a></li>
+                <li><a class="nav" href="http://localhost:8080/escuela-local/html/listadealumnos.php">Tabla</a></li>
+                <li><a href="./sesion-start/login.php"><button>Login</button></a></li>
+                <li><a href="tipo_de_alta.html"><button>ALTA</button></a></li>
+                <li><a href="tipo_de_modi.html"><button>MODIFICAR</button></a></li>
+                <li><a href="tipo_de_baja.html"><button>BAJA</button></a></li>
+
+listadealumnos alta = http://localhost:8080/escuela1/alumnos/form-alta-alumno.php
+
+Tabla alumnos = http://localhost:8080/ESCUELA1/alumnos/listarAlumnos.php/listarAlumnos.php
+
+
+
+
+Warning: Undefined variable $con in C:\xampp\htdocs\escuela1\alumnos\listar-delete-alumno.php on line 53
+
+Fatal error: Uncaught TypeError: mysqli_query(): Argument #1 ($mysql) must be of type mysqli, null given in C:\xampp\htdocs\escuela1\alumnos\listar-delete-alumno.php:53 Stack trace: #0 C:\xampp\htdocs\escuela1\alumnos\listar-delete-alumno.php(53): mysqli_query(NULL, 'DELETE FROM `al...') #1 {main} thrown in C:\xampp\htdocs\escuela1\alumnos\listar-delete-alumno.php on line 53
+
+
+INSERT INTO materias (nombreMateria, DNI_profesor) VALUES
+('Matemática', 10000002),
+('Física', 10234567),
+('Electrónica', 12345688),
+('Historia', 21345678),
+('Informática', 23456789),
+('Construcciones', 34567890),
+('Biología', 43567890),
+('Educación Física', 54678901),
+('Programación', 56789012),
+('Biología', 65432198),
+('Electrónica', 65789012),
+('Construcciones', 67890123),
+('Informática', 76890123),
+('Electrónica', 78901234),
+('Matemática', 87654322),
+('Lengua', 89012345);

@@ -1,0 +1,75 @@
+body {
+    margin: 0;
+    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+}
+
+.content-wrapper {
+    display: flex;
+    justify-content: center; /* Centra horizontalmente el conjunto de tablas */
+    gap: 20px; /* Añade espacio entre las tablas */
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.Tabla {
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px; /* Define un ancho fijo para cada tabla */
+}
+
+.Tabla input,
+.Tabla select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.Tabla input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s;
+}
+
+.Tabla input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+.image-container {
+    float: right; /* Coloca el contenedor a la derecha */
+}
+
+
+
+
+.query-container {
+    background-color: #ffffff; 
+    border: 2px solid #2b8aaf; 
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    width: 80%; 
+    margin: 40px auto; 
+}
+
+
+.query-container h2 {
+    color: #2b8aaf;
+    text-align: center;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+
+.query-container p {
+    font-size: 1.2em;
+    color: #333333;
+    margin-bottom: 10px;
+}
