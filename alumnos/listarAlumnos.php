@@ -1,12 +1,8 @@
 <?php
-    include("../conexion.php");
+include("../conexion.php");
 
-    $con = mysqli_connect($host, $user, $pwd, $BD) or die("FALLO DE CONEXION");
-    
-
-
-// Conectar a la base de datos usando mysqli
 $con = mysqli_connect($host, $user, $pwd, $BD) or die("FALLO DE CONEXION");
+
 
 // Definir el número de resultados por página
 $limite = 10;
@@ -21,10 +17,7 @@ $offset = ($pagina_actual - 1) * $limite;
 $sql = "SELECT * FROM alumnos LIMIT $limite OFFSET $offset";
 $result = mysqli_query($con, $sql);
 
-// Mostrar los resultados
-while ($alumno = mysqli_fetch_assoc($result)) {
-    echo '<p>' . $alumno['DNI_alumno'] . ' - ' . $alumno['nombre'] . '</p>';
-}
+
 
 // Contar el total de registros en la tabla
 $sql_total = "SELECT COUNT(*) as total FROM alumnos";
@@ -36,68 +29,67 @@ $total_registros = $total_row['total'];
 $total_paginas = ceil($total_registros / $limite);
 
 // Generar los enlaces de paginación
-for ($i = 1; $i <= $total_paginas; $i++) {
-    echo '<a href="?pagina=' . $i . '">' . $i . '</a> ';
+
+
+
+// Inicializar variables de filtro
+$orderBy = isset($_GET['orderBy']) ? $_GET['orderBy'] : 'nombre';
+$status = isset($_GET['status']) ? $_GET['status'] : '0';
+$curso = isset($_GET['curso']) ? $_GET['curso'] : '';
+$search = isset($_GET['search']) ? $_GET['search'] : ''; // Nueva variable de búsqueda
+
+// Validación de columnas y estado
+$validColumns = ['nombre', 'apellido', 'fechaAlta'];
+if (!in_array($orderBy, $validColumns)) {
+    $orderBy = 'nombre';
 }
 
+$validStatus = ['0', '1', '2'];
+if (!in_array($status, $validStatus)) {
+    $status = '0';
+}
 
-    // Inicializar variables de filtro
-    $orderBy = isset($_GET['orderBy']) ? $_GET['orderBy'] : 'nombre';
-    $status = isset($_GET['status']) ? $_GET['status'] : '0';
-    $curso = isset($_GET['curso']) ? $_GET['curso'] : '';
-    $search = isset($_GET['search']) ? $_GET['search'] : ''; // Nueva variable de búsqueda
+// Obtener los cursos para el filtro
+$queryCursos = "SELECT DISTINCT curso FROM alumnos";
+$resultCursos = mysqli_query($con, $queryCursos) or die("ERROR AL OBTENER CURSOS");
 
-    // Validación de columnas y estado
-    $validColumns = ['nombre', 'apellido', 'fechaAlta'];
-    if (!in_array($orderBy, $validColumns)) {
-        $orderBy = 'nombre';
-    }
-
-    $validStatus = ['0', '1', '2'];
-    if (!in_array($status, $validStatus)) {
-        $status = '0';
-    }
-
-    // Obtener los cursos para el filtro
-    $queryCursos = "SELECT DISTINCT curso FROM alumnos";
-    $resultCursos = mysqli_query($con, $queryCursos) or die("ERROR AL OBTENER CURSOS");
-
-    // Construir la consulta con el filtro de estado, curso, búsqueda y orden
-    $query = "SELECT DNI_alumno, nombre, apellido, curso, especialidad, fechaAlta, fechaBaja
+// Construir la consulta con el filtro de estado, curso, búsqueda y orden
+$query = "SELECT DNI_alumno, nombre, apellido, curso, especialidad, fechaAlta, fechaBaja
               FROM alumnos
               WHERE baja = $status";
 
-    // Agregar el filtro de curso si se selecciona
-    if (!empty($curso)) {
-        $query .= " AND curso = '$curso'";
-    }
+// Agregar el filtro de curso si se selecciona
+if (!empty($curso)) {
+    $query .= " AND curso = '$curso'";
+}
 
-    // Agregar búsqueda si se introduce una búsqueda
-    if (!empty($search)) {
-        $query .= " AND (nombre LIKE '%$search%' OR apellido LIKE '%$search%')";
-    }
+// Agregar búsqueda si se introduce una búsqueda
+if (!empty($search)) {
+    $query .= " AND (nombre LIKE '%$search%' OR apellido LIKE '%$search%')";
+}
 
-    // Agregar orden por la columna seleccionada
-    $query .= " ORDER BY $orderBy";
+// Agregar orden por la columna seleccionada
+$query .= " ORDER BY $orderBy";
 
-    // Ejecutar consulta
-    $result = mysqli_query($con, $query) or die("ERROR AL OBTENER ALUMNOS");
+// Ejecutar consulta
+$result = mysqli_query($con, $query) or die("ERROR AL OBTENER ALUMNOS");
 
-    // Obtener el número total de registros
-    $queryTotal = "SELECT COUNT(*) AS total FROM alumnos WHERE baja = $status";
-    if (!empty($curso)) {
-        $queryTotal .= " AND curso = '$curso'";
-    }
-    if (!empty($search)) {
-        $queryTotal .= " AND (nombre LIKE '%$search%' OR apellido LIKE '%$search%')";
-    }
-    $resultTotal = mysqli_query($con, $queryTotal) or die("ERROR DE CONTEO");
-    $rowTotal = mysqli_fetch_assoc($resultTotal);
-    $total_records = $rowTotal['total'];
+// Obtener el número total de registros
+$queryTotal = "SELECT COUNT(*) AS total FROM alumnos WHERE baja = $status";
+if (!empty($curso)) {
+    $queryTotal .= " AND curso = '$curso'";
+}
+if (!empty($search)) {
+    $queryTotal .= " AND (nombre LIKE '%$search%' OR apellido LIKE '%$search%')";
+}
+$resultTotal = mysqli_query($con, $queryTotal) or die("ERROR DE CONTEO");
+$rowTotal = mysqli_fetch_assoc($resultTotal);
+$total_records = $rowTotal['total'];
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -107,30 +99,31 @@ for ($i = 1; $i <= $total_paginas; $i++) {
     <link rel="stylesheet" href="../CSS/header.css">
     <link rel="stylesheet" href="../CSS/index.css">
 </head>
+
 <body>
-<header>
+    <header>
         <h1 class='text-center-titulo'>Lista de Alumnos</h1><br>
         <nav class="nav-right">
             <a href="../index.php">
                 <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
-                <path d="M3 9.5L12 2l9 7.5v11a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 3 20.5v-11z"></path>
-                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    <path d="M3 9.5L12 2l9 7.5v11a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 3 20.5v-11z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
                 </svg>
             </a>
         </nav>
     </header>
-   
+
     <!-- Filtros y campo de búsqueda -->
     <div class='container ' style="margin-top: 20px;">
-    <!-- Icono SVG arriba de los filtros, alineado a la derecha -->
-    <div class="d-flex justify-content-end mb-3">
-        <div class="image-container">
-            <a href="../profesores/form-alta-profesor.php">
-                <img src="../SVG/add.svg" alt="Añadir" class="add" style="width: 30px; height: 30px;">
-            </a>
+        <!-- Icono SVG arriba de los filtros, alineado a la derecha -->
+        <div class="d-flex justify-content-end mb-3">
+            <div class="image-container">
+                <a href="../profesores/form-alta-profesor.php">
+                    <img src="../SVG/add.svg" alt="Añadir" class="add" style="width: 30px; height: 30px;">
+                </a>
+            </div>
         </div>
-    </div>
-  
+
         <div class='row mb-3'>
             <div class='col-md-3'>
                 <label for='orderSelect'>Ordenar por:</label>
@@ -152,7 +145,7 @@ for ($i = 1; $i <= $total_paginas; $i++) {
                 <label for='cursoSelect'>Curso:</label>
                 <select class='form-select' id='cursoSelect' onchange='changeFilter()'>
                     <option value='' <?php echo $curso == '' ? 'selected' : ''; ?>>Todos</option>
-                    <?php while($rowCurso = mysqli_fetch_array($resultCursos)) { ?>
+                    <?php while ($rowCurso = mysqli_fetch_array($resultCursos)) { ?>
                         <option value='<?php echo $rowCurso['curso']; ?>' <?php echo $curso == $rowCurso['curso'] ? 'selected' : ''; ?>>
                             <?php echo $rowCurso['curso']; ?>
                         </option>
@@ -167,20 +160,20 @@ for ($i = 1; $i <= $total_paginas; $i++) {
                     <button class="input-group-text" onclick="changeFilter()" style="height: 38px; width: 40px;">
 
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.415l-3.85-3.85zm-5.743 0a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.415l-3.85-3.85zm-5.743 0a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z" />
                         </svg>
                     </button>
                 </div>
             </div>
-            
-            
+
+
         </div>
 
         <?php
         if ($status === '2') {
             // Mostrar la tabla de eliminados
             $query = "SELECT * FROM respaldoalumnos";
-            
+
             // Agregar el filtro de curso si está seleccionado
             if (!empty($curso)) {
                 $query .= " WHERE curso = '$curso'";
@@ -189,89 +182,118 @@ for ($i = 1; $i <= $total_paginas; $i++) {
             $query .= " ORDER BY $orderBy";
             $result = mysqli_query($con, $query) or die("ERROR DE CONSULTA");
         ?>
-        
-        <table class='table table-striped'>
-            <thead class='table-sky-blue'>
-                <tr>
-                    <th>DNI</th>
-                    <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>Curso</th>
-                    <th>Especialidad</th>
-                    <th>Alta</th>
-                    <th>Eliminación</th>
-                    <th>Usuario Encargado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-            <?php while($row = mysqli_fetch_array($result)) { ?>
-                <tr>
-                <td><?php echo $row['DNI_alumno']; ?></td>
-                    <td><?php echo $row['nombre']; ?></td>
-                    <td><?php echo $row['apellido']; ?></td>
-                    <td><?php echo $row['curso']; ?></td>
-                    <td><?php echo $row['especialidad']; ?></td>
-                    <td><?php echo $row['fechaAlta']; ?></td>
-                    <td><?php echo $row['fechaEliminacion']; ?></td>
-                    <td><?php echo $row['usuarioEncargado']; ?></td>
-                    <td class="acciones">
-                    <form method="POST" action="eliminar-reinsertar.php" style="display:inline;">
-                        <input type="hidden" name="alumno" value="<?php echo $row['ID']; ?>">
-                        <button type="submit" class="btn-accion" onclick="return confirm('¿Está seguro de que desea reinsertar este alumno?');">
-                            <img src="../Imagenes/return.png" alt="reinsertar" class="icono" width="24px">
-                        </button>
-                    </form>
-                    </td>
-                </tr>
-            <?php } ?>
-            </tbody>
-        </table>
+
+            <table class='table table-striped'>
+                <thead class='table-sky-blue'>
+                    <tr>
+                        <th>DNI</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Curso</th>
+                        <th>Especialidad</th>
+                        <th>Alta</th>
+                        <th>Eliminación</th>
+                        <th>Usuario Encargado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($row = mysqli_fetch_array($result)) { ?>
+                        <tr>
+                            <td><?php echo $row['DNI_alumno']; ?></td>
+                            <td><?php echo $row['nombre']; ?></td>
+                            <td><?php echo $row['apellido']; ?></td>
+                            <td><?php echo $row['curso']; ?></td>
+                            <td><?php echo $row['especialidad']; ?></td>
+                            <td><?php echo $row['fechaAlta']; ?></td>
+                            <td><?php echo $row['fechaEliminacion']; ?></td>
+                            <td><?php echo $row['usuarioEncargado']; ?></td>
+                            <td class="acciones">
+                                <form method="POST" action="eliminar-reinsertar.php" style="display:inline;">
+                                    <input type="hidden" name="alumno" value="<?php echo $row['ID']; ?>">
+                                    <button type="submit" class="btn-accion" onclick="return confirm('¿Está seguro de que desea reinsertar este alumno?');">
+                                        <img src="../Imagenes/return.png" alt="reinsertar" class="icono" width="24px">
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
 
         <?php } else { ?>
-        
-        <!-- Tabla de alumnos activos o inactivos -->
-        <table class='table table-striped'>
-            <thead class='table-sky-blue'>
-                <tr>
-                    <th>DNI</th>
-                    <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>Curso</th>
-                    <th>Especialidad</th>
-                    <th>Alta</th>
-                    <th>Baja</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-            <?php while($row = mysqli_fetch_array($result)) { ?>
-                <tr>
-                    <td><?php echo $row['DNI_alumno']; ?></td>
-                    <td><?php echo $row['nombre']; ?></td>
-                    <td><?php echo $row['apellido']; ?></td>
-                    <td><?php echo $row['curso']; ?></td>
-                    <td><?php echo $row['especialidad']; ?></td>
-                    <td><?php echo $row['fechaAlta']; ?></td>
-                    <td><?php echo $row['fechaBaja']; ?></td>
-                    <td class="acciones">
-                        <a class="btn-accion" href="listar-modi-alumno.php?alumno=<?php echo $row['DNI_alumno']; ?>">
-                            <img src="../SVG/lapiz.svg" alt="Modificar" class="icono" width="24px">
-                        </a>
-                        <form method="POST" action="listar-delete-alumno.php" style="display:inline;">
-                            <input type="hidden" name="DNI" value="<?php echo $row['DNI_alumno']; ?>">
-                            <button type="submit" class="btn-accion">
-                                <img src="../SVG/si.svg" alt="Eliminar" class="icono">
-                            </button>
-                        </form>
-                        <a class="btn-accion" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">
-                            <img src="../SVG/libro.svg" alt="Boletín" class="icono" width="24px">
-                        </a>
-                    </td>
-                </tr>
-            <?php } ?>
-            </tbody>
-        </table>
+
+            <!-- Tabla de alumnos activos o inactivos -->
+            <table class='table table-striped'>
+                <thead class='table-sky-blue'>
+                    <tr>
+                        <th>DNI</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Curso</th>
+                        <th>Especialidad</th>
+                        <th>Alta</th>
+                        <th>Baja</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($row = mysqli_fetch_array($result)) { ?>
+                        <tr>
+                            <td><?php echo $row['DNI_alumno']; ?></td>
+                            <td><?php echo $row['nombre']; ?></td>
+                            <td><?php echo $row['apellido']; ?></td>
+                            <td><?php echo $row['curso']; ?></td>
+                            <td><?php echo $row['especialidad']; ?></td>
+                            <td><?php echo $row['fechaAlta']; ?></td>
+                            <td><?php echo $row['fechaBaja']; ?></td>
+                            <td class="acciones">
+                                <a class="btn-accion" href="listar-modi-alumno.php?alumno=<?php echo $row['DNI_alumno']; ?>">
+                                    <img src="../SVG/lapiz.svg" alt="Modificar" class="icono" width="24px">
+                                </a>
+                                <form method="POST" action="listar-delete-alumno.php" style="display:inline;">
+                                    <input type="hidden" name="DNI" value="<?php echo $row['DNI_alumno']; ?>">
+                                    <button type="submit" class="btn-accion">
+                                        <img src="../SVG/si.svg" alt="Eliminar" class="icono">
+                                    </button>
+                                </form>
+                                <a class="btn-accion" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">
+                                    <img src="../SVG/libro.svg" alt="Boletín" class="icono" width="24px">
+                                </a>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+            <?php
+            // Definir el número de resultados por página
+            $limite = 10;
+
+            // Obtener la página actual desde la URL, si no se define, será la primera página
+            $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+
+            // Calcular el desplazamiento (OFFSET) para la consulta
+            $offset = ($pagina_actual - 1) * $limite;
+
+            // Realizar la consulta para obtener los resultados de la página actual
+            $sql = "SELECT * FROM alumnos LIMIT $limite OFFSET $offset";
+            $result = mysqli_query($con, $sql);
+
+
+
+            // Contar el total de registros en la tabla
+            $sql_total = "SELECT COUNT(*) as total FROM alumnos";
+            $total_result = mysqli_query($con, $sql_total);
+            $total_row = mysqli_fetch_assoc($total_result);
+            $total_registros = $total_row['total'];
+
+            // Calcular el número total de páginas
+            $total_paginas = ceil($total_registros / $limite);
+
+            // Generar los enlaces de paginación
+            for ($i = 1; $i <= $total_paginas; $i++) {
+                echo '<a href="?pagina=' . $i . '">' . $i . '</a> ';
+            } ?>
 
         <?php } ?>
 
@@ -298,4 +320,5 @@ for ($i = 1; $i <= $total_paginas; $i++) {
         }
     </script>
 </body>
+
 </html>
