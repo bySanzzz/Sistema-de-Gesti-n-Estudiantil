@@ -3,8 +3,11 @@ include("../conexion.php");
 
 $con = mysqli_connect($host, $user, $pwd, $BD) or die("FALLO DE CONEXION");
 
+//hola esta es la ultima actu
+
+
 // Definir el número de resultados por página
-$limite = 5;
+$limite = 10;
 
 // Obtener la página actual desde la URL, si no se define, será la primera página
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
