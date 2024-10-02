@@ -2,7 +2,7 @@
 include("../conexion.php");
 
 $con = mysqli_connect($host, $user, $pwd, $BD) or die("FALLO DE CONEXION");
-
+//hola esta es la ultima actu
 
 // Definir el número de resultados por página
 $limite = 10;
