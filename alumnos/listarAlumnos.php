@@ -18,7 +18,7 @@ $sql = "SELECT * FROM alumnos LIMIT $limite OFFSET $offset";
 $result = mysqli_query($con, $sql);
 
 
-
+//santi trbajas muy mal
 // Contar el total de registros en la tabla
 $sql_total = "SELECT COUNT(*) as total FROM alumnos";
 $total_result = mysqli_query($con, $sql_total);
