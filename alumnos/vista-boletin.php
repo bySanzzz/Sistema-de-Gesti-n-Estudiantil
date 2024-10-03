@@ -95,29 +95,28 @@
 
         // Consulta para obtener la informacion del boletin junto con la última fecha
         $query = "SELECT
-                    alumnos.DNI_alumno,
-                    alumnos.nombre,
-                    alumnos.apellido,
-                    alumnos.curso,
-                    alumnos.especialidad,
-                    materias.nombreMateria,
-                    boletin.notaTP,
-                    boletin.notaExamen,
-                    boletin.notaConcepto,
-                    boletin.promedio,
-                    boletin.DNI_ as tener
-                    MAX(boletin.fecha) AS ultima_fecha
-                FROM
-                    alumnos
-                INNER JOIN
-                    boletin ON alumnos.DNI_alumno = boletin.DNI_alumno
-                INNER JOIN
-                    materias ON boletin.ID_materia = materias.ID_materia
-                LEFT JOIN boletin on boletin alumnos.DNI_alumno = boletin.DNI_alumno
-                WHERE
-                    alumnos.DNI_alumno = '$dni'
-                GROUP BY
-                    materias.ID_materia, boletin.notaTP, boletin.notaExamen, boletin.notaConcepto, boletin.promedio";
+            alumnos.DNI_alumno,
+            alumnos.nombre,
+            alumnos.apellido,
+            alumnos.curso,
+            alumnos.especialidad,
+            materias.nombreMateria,
+            boletin.notaTP,
+            boletin.notaExamen,
+            boletin.notaConcepto,
+            boletin.promedio,
+            boletin.DNI_alumno as tiene,
+            MAX(boletin.fecha) AS ultima_fecha
+        FROM
+            alumnos
+        INNER JOIN
+            boletin ON alumnos.DNI_alumno = boletin.DNI_alumno
+        INNER JOIN
+            materias ON boletin.ID_materia = materias.ID_materia
+        WHERE
+            alumnos.DNI_alumno = '$dni'
+        GROUP BY
+            materias.ID_materia, boletin.notaTP, boletin.notaExamen, boletin.notaConcepto, boletin.promedio";
 
         // Ejecutar la consulta
         $result = mysqli_query($con, $query);

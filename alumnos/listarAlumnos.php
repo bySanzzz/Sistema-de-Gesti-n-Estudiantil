@@ -3,8 +3,6 @@ include("../conexion.php");
 
 $con = mysqli_connect($host, $user, $pwd, $BD) or die("FALLO DE CONEXION");
 
-//hola esta es la ultima actu
-
 
 // Definir el número de resultados por página
 $limite = 7;
@@ -261,9 +259,15 @@ $total_paginas = ceil($total_records / $limite);
                                         <img src="../SVG/si.svg" alt="Eliminar" class="icono">
                                     </button>
                                 </form>
-                                <a class="btn-accion" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">
-                                    <img src="../SVG/libro.svg" alt="Boletín" class="icono" width="24px">
-                                </a>
+                                <?php if (isset($row['tiene'])) { ?>
+                                    <a class="btn-accion" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">
+                                        <img src="../SVG/libro.svg" alt="Boletín" class="icono" width="24px">
+                                    </a>
+                                <?php } else { ?>
+                                    <a class="btn-accion" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">
+                                        <img src="../SVG/librovacio.svg" alt="Boletín" class="icono" width="24px">
+                                    </a>
+                                <?php } ?>
                             </td>
                         </tr>
                     <?php } ?>
@@ -284,6 +288,7 @@ $total_paginas = ceil($total_records / $limite);
                     </tr>
                 </thead>
                 <tbody>
+                    <!-- Aquí se actualizarán los resultados con AJAX -->
                     <?php while ($row = mysqli_fetch_array($result)) { ?>
                         <tr>
                             <td><?php echo $row['DNI_alumno']; ?></td>
@@ -302,15 +307,21 @@ $total_paginas = ceil($total_records / $limite);
                                         <img src="../SVG/si.svg" alt="Eliminar" class="icono">
                                     </button>
                                 </form>
-                                <a class="btn-accion" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">
-                                    <img src="../SVG/libro.svg" alt="Boletín" class="icono" width="24px">
-                                </a>
-
+                                <?php if (isset($row['tiene'])) { ?>
+                                    <a class="btn-accion" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">
+                                        <img src="../SVG/libro.svg" alt="Boletín" class="icono" width="24px">
+                                    </a>
+                                <?php } else { ?>
+                                    <a class="btn-accion" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">
+                                        <img src="../SVG/librovacio.svg" alt="Boletín" class="icono" width="24px">
+                                    </a>
+                                <?php } ?>
                             </td>
                         </tr>
                     <?php } ?>
                 </tbody>
             </table>
+
         <?php } ?>
         <nav aria-label='Paginación'>
             <ul class='pagination justify-content-center'>
@@ -327,21 +338,27 @@ $total_paginas = ceil($total_records / $limite);
     </div>
 
     <script>
+        // Función que se llama en cada tecla presionada
+        document.getElementById('searchInput').addEventListener('input', function() {
+            changeFilter();
+        });
+
         function changeFilter() {
             const orderBy = document.getElementById('orderSelect').value;
             const status = document.getElementById('statusSelect').value;
             const curso = document.getElementById('cursoSelect').value;
             const search = document.getElementById('searchInput').value;
 
-            // Redirigir a la página con los filtros seleccionados
-            window.location.href = "?orderBy=" + orderBy + "&status=" + status + "&curso=" + curso + "&search=" + search;
-        }
-
-        // Permitir buscar con la tecla Enter
-        function handleSearchKeypress(event) {
-            if (event.key === "Enter") {
-                changeFilter();
-            }
+            // Realizar solicitud AJAX
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', `buscarAlumno.php?orderBy=${orderBy}&status=${status}&curso=${curso}&search=${search}`, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    // Actualizar la tabla con los resultados
+                    document.querySelector('tbody').innerHTML = xhr.responseText;
+                }
+            };
+            xhr.send();
         }
     </script>
 
