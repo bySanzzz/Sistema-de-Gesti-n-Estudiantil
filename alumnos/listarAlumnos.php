@@ -2,10 +2,12 @@
 include("../conexion.php");
 
 $con = mysqli_connect($host, $user, $pwd, $BD) or die("FALLO DE CONEXION");
+
 //hola esta es la ultima actu
 
+
 // Definir el número de resultados por página
-$limite = 10;
+$limite = 7;
 
 // Obtener la página actual desde la URL, si no se define, será la primera página
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
@@ -71,6 +73,9 @@ if (!empty($search)) {
 // Agregar orden por la columna seleccionada
 $query .= " ORDER BY $orderBy";
 
+// Agregar la limitación de paginación
+$query .= " LIMIT $limite OFFSET $offset";
+
 // Ejecutar consulta
 $result = mysqli_query($con, $query) or die("ERROR AL OBTENER ALUMNOS");
 
@@ -85,6 +90,9 @@ if (!empty($search)) {
 $resultTotal = mysqli_query($con, $queryTotal) or die("ERROR DE CONTEO");
 $rowTotal = mysqli_fetch_assoc($resultTotal);
 $total_records = $rowTotal['total'];
+
+// Calcular el número total de páginas
+$total_paginas = ceil($total_records / $limite);
 ?>
 
 <!DOCTYPE html>
@@ -158,15 +166,12 @@ $total_records = $rowTotal['total'];
                 <div class="input-group">
                     <input type="text" id="searchInput" class="form-control" placeholder="Buscar alumno..." value="<?php echo $search; ?>" onkeypress="handleSearchKeypress(event)">
                     <button class="input-group-text" onclick="changeFilter()" style="height: 38px; width: 40px;">
-
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.415l-3.85-3.85zm-5.743 0a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z" />
                         </svg>
                     </button>
                 </div>
             </div>
-
-
         </div>
 
         <?php
@@ -221,9 +226,8 @@ $total_records = $rowTotal['total'];
                 </tbody>
             </table>
 
-        <?php } else { ?>
-
-            <!-- Tabla de alumnos activos o inactivos -->
+        <?php } elseif ($status === '1') { ?>
+            <!-- Tabla de alumnos inactivos -->
             <table class='table table-striped'>
                 <thead class='table-sky-blue'>
                     <tr>
@@ -265,60 +269,81 @@ $total_records = $rowTotal['total'];
                     <?php } ?>
                 </tbody>
             </table>
-            <?php
-            // Definir el número de resultados por página
-            $limite = 10;
-
-            // Obtener la página actual desde la URL, si no se define, será la primera página
-            $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
-
-            // Calcular el desplazamiento (OFFSET) para la consulta
-            $offset = ($pagina_actual - 1) * $limite;
-
-            // Realizar la consulta para obtener los resultados de la página actual
-            $sql = "SELECT * FROM alumnos LIMIT $limite OFFSET $offset";
-            $result = mysqli_query($con, $sql);
-
-
-
-            // Contar el total de registros en la tabla
-            $sql_total = "SELECT COUNT(*) as total FROM alumnos";
-            $total_result = mysqli_query($con, $sql_total);
-            $total_row = mysqli_fetch_assoc($total_result);
-            $total_registros = $total_row['total'];
-
-            // Calcular el número total de páginas
-            $total_paginas = ceil($total_registros / $limite);
-
-            // Generar los enlaces de paginación
-            for ($i = 1; $i <= $total_paginas; $i++) {
-                echo '<a href="?pagina=' . $i . '">' . $i . '</a> ';
-            } ?>
-
+        <?php } else { ?>
+            <!-- Tabla de alumnos activos -->
+            <table class='table table-striped'>
+                <thead class='table-sky-blue'>
+                    <tr>
+                        <th>DNI</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Curso</th>
+                        <th>Especialidad</th>
+                        <th>Alta</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($row = mysqli_fetch_array($result)) { ?>
+                        <tr>
+                            <td><?php echo $row['DNI_alumno']; ?></td>
+                            <td><?php echo $row['nombre']; ?></td>
+                            <td><?php echo $row['apellido']; ?></td>
+                            <td><?php echo $row['curso']; ?></td>
+                            <td><?php echo $row['especialidad']; ?></td>
+                            <td><?php echo $row['fechaAlta']; ?></td>
+                            <td class="acciones">
+                                <a class="btn-accion" href="listar-modi-alumno.php?alumno=<?php echo $row['DNI_alumno']; ?>">
+                                    <img src="../SVG/lapiz.svg" alt="Modificar" class="icono" width="24px">
+                                </a>
+                                <form method="POST" action="listar-delete-alumno.php" style="display:inline;">
+                                    <input type="hidden" name="DNI" value="<?php echo $row['DNI_alumno']; ?>">
+                                    <button type="submit" class="btn-accion">
+                                        <img src="../SVG/si.svg" alt="Eliminar" class="icono">
+                                    </button>
+                                </form>
+                                <a class="btn-accion" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">
+                                    <img src="../SVG/libro.svg" alt="Boletín" class="icono" width="24px">
+                                </a>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
         <?php } ?>
-
-        <!-- Paginación o mensajes adicionales -->
-        <p>Total de registros: <?php echo $total_records; ?></p>
+        <nav aria-label='Paginación'>
+            <ul class='pagination justify-content-center'>
+                <?php for ($i = 1; $i <= $total_paginas; $i++) { ?>
+                    <li class='page-item <?php echo $i == $pagina_actual ? 'active' : ''; ?>'>
+                        <a class='page-link' href="?pagina=<?php echo $i; ?>&orderBy=<?php echo $orderBy; ?>&status=<?php echo $status; ?>&curso=<?php echo $curso; ?>&search=<?php echo $search; ?>">
+                            <?php echo $i; ?>
+                        </a>
+                    </li>
+                <?php } ?>
+            </ul>
+        </nav>
 
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function changeFilter() {
-            let orderBy = document.getElementById('orderSelect').value;
-            let status = document.getElementById('statusSelect').value;
-            let curso = document.getElementById('cursoSelect').value;
-            let search = document.getElementById('searchInput').value;
-            window.location.href = `?orderBy=${orderBy}&status=${status}&curso=${curso}&search=${search}`;
+            const orderBy = document.getElementById('orderSelect').value;
+            const status = document.getElementById('statusSelect').value;
+            const curso = document.getElementById('cursoSelect').value;
+            const search = document.getElementById('searchInput').value;
+
+            // Redirigir a la página con los filtros seleccionados
+            window.location.href = "?orderBy=" + orderBy + "&status=" + status + "&curso=" + curso + "&search=" + search;
         }
 
+        // Permitir buscar con la tecla Enter
         function handleSearchKeypress(event) {
-            if (event.key === 'Enter') {
+            if (event.key === "Enter") {
                 changeFilter();
             }
         }
     </script>
+
 </body>
 
 </html>
