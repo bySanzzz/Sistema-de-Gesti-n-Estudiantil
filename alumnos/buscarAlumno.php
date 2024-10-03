@@ -45,6 +45,8 @@ $query .= " LIMIT $limite OFFSET $offset";
 // Ejecutar consulta
 $result = mysqli_query($con, $query) or die("ERROR AL OBTENER ALUMNOS");
 
+$estadoLibro = isset($_GET['alumno']) ? $_GET['alumno'] : null;
+
 // Generar la tabla de resultados
 while ($row = mysqli_fetch_assoc($result)) {
     echo "<tr>";
@@ -64,6 +66,9 @@ while ($row = mysqli_fetch_assoc($result)) {
                     <img src='../SVG/si.svg' alt='Eliminar' class='icono'>
                 </button>
             </form>
+            <a class='btn-accion' href='vista-boletin.php?alumno=" . $row['DNI_alumno'] . "'>
+                <img src='../SVG/" . $estadoLibro . "' alt='Boletín' class='icono' width='24px'>
+            </a>
         </td>";
     echo "</tr>";
 }
