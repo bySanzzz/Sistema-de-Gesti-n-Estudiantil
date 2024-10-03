@@ -286,6 +286,7 @@ $total_paginas = ceil($total_records / $limite);
                                 <a class="btn-accion" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">
                                     <img src="../SVG/libro.svg" alt="Boletín" class="icono" width="24px">
                                 </a>
+
                             </td>
                         </tr>
                     <?php } ?>
