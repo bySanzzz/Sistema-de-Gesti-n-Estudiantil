@@ -8,6 +8,55 @@
     <link rel="stylesheet" href="../CSS/indexmodi.css">
     <link rel="stylesheet" href="../CSS/header.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .datos-alumno {
+            padding: 20px;
+            border-radius: 8px;
+            flex: 1;
+        }
+
+        .registrar-notas {
+            background-color: darkgray;
+            color: black;
+            padding: 20px;
+            border-radius: 8px;
+            flex: 1;
+        }
+
+        .form-label {
+            color: black;
+        }
+
+        .form-control {
+            color: black;
+        }
+
+        h4 {
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .btn-accion {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .btn-accion:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 
 <body>
@@ -19,61 +68,7 @@
                 <img src="../Imagenes/sanmiguel.png" alt="Logo San Miguel">
             </div>
         </div>
-        <div class="menu-buttons">
-            <button id="openMenu" class="botone">
-                <div class="svg-container">
-                    <svg width="80px" height="80px" viewBox="-2.4 -2.4 28.80 28.80" xmlns="http://www.w3.org/2000/svg" fill="#ffffff" stroke="#ffffff">
-                        <g id="SVGRepo_bgCarrier" stroke-width="0">
-                            <rect x="-2.4" y="-2.4" width="28.80" height="28.80" rx="0" fill="#2b8aaf" stroke-width="0"></rect>
-                        </g>
-                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                        <g id="SVGRepo_iconCarrier">
-                            <rect x="0" fill="none" width="24" height="24"></rect>
-                            <g>
-                                <path d="M4 19h16v-2H4v2zm16-6H4v2h16v-2zM4 9v2h16V9H4zm16-4H4v2h16V5z"></path>
-                            </g>
-                        </g>
-                    </svg>
-                </div>
-            </button>
-        </div>
-        <nav class="nav-list">
-            <div class="menu-buttons">
-                <button id="closeMenu" class="botone2">
-                    <div class="svg-container">
-                        <svg width="80px" height="80px" viewBox="-2.4 -2.4 28.80 28.80" xmlns="http://www.w3.org/2000/svg" fill="#ffffff" stroke="#ffffff">
-                            <g id="SVGRepo_bgCarrier" stroke-width="0">
-                                <rect x="-2.4" y="-2.4" width="28.80" height="28.80" rx="0" fill="#333" stroke-width="0"></rect>
-                            </g>
-                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                            <g id="SVGRepo_iconCarrier">
-                                <rect x="0" fill="none" width="24" height="24"></rect>
-                                <g>
-                                    <path d="M4 19h16v-2H4v2zm16-6H4v2h16v-2zM4 9v2h16V9H4zm16-4H4v2h16V5z"></path>
-                                </g>
-                            </g>
-                        </svg>
-                    </div>
-                </button>
-            </div>
-            <ul>
-                <h2>
-                    <li><a href="http://localhost:8080/escuela1/">Principal</a></li>
-                </h2>
-                <h2>
-                    <li><a href="http://localhost:8080/escuela1/alumnos/listarAlumnos.php">Alumno</a></li>
-                </h2>
-                <h2>
-                    <li><a class="nav" href="http://localhost:8080/escuela1/profesores/listarProfesor.php">Profesor</a></li>
-                </h2>
-            </ul>
-            <div class="logo">
-                <img src="../Imagenes/sanmiguel.png" alt="Logo San Miguel">
-            </div>
-        </nav>
     </header>
-
-    <script src="../JavaScript/menu.js"></script>
 
     <?php
     include("../conexion.php");
@@ -115,22 +110,27 @@
             $resultado = mysqli_query($con, $insert_query);
 
             echo "<script>
-            Swal.fire({
-                position: 'center',
-                icon: 'success',
-                title: 'Nota registrada con éxito.',
-                html: '<a href=\"vista-boletin.php?alumno=$alumno_dni\" class=\"btn btn-success\">VOLVER</a>',
-                showConfirmButton: false,
-            });
-        </script>";
+                Swal.fire({
+                    title: 'Nota registrada con éxito.',
+                    text: '¡La nota se ha guardado correctamente!',
+                    icon: 'success',
+                    showClass: {
+                        popup: 'animate__animated animate__fadeInUp animate__faster'
+                    },
+                    hideClass: {
+                        popup: 'animate__animated animate__fadeOutDown animate__faster'
+                    },
+                    confirmButtonText: '<a href=\"vista-boletin.php?alumno=$alumno_dni\" style=\"color:white; text-decoration:none;\">VOLVER</a>',
+                    confirmButtonColor: '#007bff'
+                });
+            </script>";
         } else {
     ?>
             <div class="container mt-4">
-                <div class="row">
-                    <!-- Primera columna para Datos del Alumno, Profesor y Materia -->
-                    <div class="col-md-6">
-                        <h4>Datos del Alumno</h4>
-                        <form method="GET" action="">
+                <form method="POST" action="">
+                    <div class="row">
+                        <div class="col-md-6 datos-alumno">
+                            <h4>Datos del Alumno</h4>
                             <div class="mb-3">
                                 <label>Nombre Alumno:</label>
                                 <input class="form-control" type="text" value="<?php echo $nombre_completo; ?>" readonly>
@@ -162,42 +162,35 @@
                                     </select>
                                 </div>
                             <?php } ?>
-                        </form>
-                    </div>
+                        </div>
 
-                    <!-- Segunda columna para Registrar Notas -->
-                    <div class="col-md-6">
-                        <h4>Registrar Notas</h4>
-                        <form method="POST" action="">
+                        <div class="col-md-6 registrar-notas">
+                            <h4>Registrar Notas</h4>
                             <div class="mb-3">
-                                <label>Nota TP:</label>
+                                <label class="form-label">Nota TP:</label>
                                 <input class="form-control" type="number" name="notaTP" min="1" max="10" required>
                             </div>
                             <div class="mb-3">
-                                <label>Nota Concepto:</label>
+                                <label class="form-label">Nota Concepto:</label>
                                 <input class="form-control" type="number" name="notaConcepto" min="1" max="10" required>
                             </div>
                             <div class="mb-3">
-                                <label>Nota Examen:</label>
+                                <label class="form-label">Nota Examen:</label>
                                 <input class="form-control" type="number" name="notaExamen" min="1" max="10" required>
                             </div>
                             <br>
                             <input class="btn btn-primary" type="submit" value="Registrar Nota">
-                        </form>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
+            <div class="container" style="margin-bottom: 20px;">
+                <a class="btn btn-primary" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">Volver</a>
+            </div>
+
     <?php
         }
-    } else {
-        echo "<div class='container'>
-            <div class='alert alert-danger' role='alert'>
-                No se encontró ningún alumno con ese DNI.
-            </div>
-            <a href='../alumnos/listarAlumnos.php' class='btn btn-warning'>Volver</a>
-        </div>";
     }
-
     mysqli_close($con);
     ?>
 
