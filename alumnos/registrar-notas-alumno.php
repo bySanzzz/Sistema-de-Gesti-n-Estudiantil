@@ -80,21 +80,15 @@
 
     $con = mysqli_connect($host, $user, $pwd, $BD) or die("FALLO DE CONEXION");
 
-    // Verificar si se recibió el DNI del alumno
     $alumno_dni = isset($_GET['alumno']) ? mysqli_real_escape_string($con, $_GET['alumno']) : null;
-
-    // Verificar si se seleccionó un DNI de profesor
     $dni_profesor = isset($_GET['DNI_profesor']) ? mysqli_real_escape_string($con, $_GET['DNI_profesor']) : null;
 
-    // Consulta para verificar si el DNI del alumno ya existe en la base de datos
     $check_query = "SELECT DNI_alumno, nombre, apellido FROM alumnos WHERE DNI_alumno = '$alumno_dni'";
     $check_result = mysqli_query($con, $check_query);
 
-    // Obtener lista de profesores
     $profesor_query = "SELECT DNI_profesor, nombre FROM profesor";
     $profesores = mysqli_query($con, $profesor_query);
 
-    // Si hay un profesor seleccionado, obtener las materias asociadas a ese profesor
     $materias = [];
     if ($dni_profesor) {
         $materia_query = "SELECT materias.ID_materia, materias.nombreMateria
@@ -108,7 +102,6 @@
         $alumno = mysqli_fetch_assoc($check_result);
         $nombre_completo = $alumno['nombre'] . " " . $alumno['apellido'];
 
-        // Si se enviaron las notas
         if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['notaTP'], $_POST['notaConcepto'], $_POST['notaExamen'], $_POST['ID_materia'])) {
             $notaTP = mysqli_real_escape_string($con, $_POST['notaTP']);
             $notaConcepto = mysqli_real_escape_string($con, $_POST['notaConcepto']);
@@ -133,48 +126,66 @@
         } else {
     ?>
             <div class="container mt-4">
-                <form method="POST" action="" class="form-group">
-                    <label>Alumno: <?php echo $nombre_completo; ?> </label>
-                    <br>
-
-                    <label>DNI Alumno:</label>
-                    <input class="form-control" type="text" name="DNI" value="<?php echo $alumno_dni; ?>" readonly>
-
-                    <label>Seleccionar Profesor:</label>
-                    <select class="form-control" name="DNI_profesor" onchange="location = this.value;">
-                        <option value="">Seleccione un profesor</option>
-                        <?php while ($row = mysqli_fetch_assoc($profesores)) { ?>
-                            <option value="?alumno=<?php echo $alumno_dni; ?>&DNI_profesor=<?php echo $row['DNI_profesor']; ?>"
-                                <?php if ($dni_profesor == $row['DNI_profesor']) echo 'selected'; ?>>
-                                <?php echo $row['DNI_profesor'] . " - " . $row['nombre']; ?>
-                            </option>
-                        <?php } ?>
-                    </select>
-
-                    <?php if ($dni_profesor) { ?>
-                        <label>Seleccionar Materia:</label>
-                        <select class="form-control" name="ID_materia" required>
-                            <option value="">Seleccione una materia</option>
-                            <?php while ($row = mysqli_fetch_assoc($materias)) { ?>
-                                <option value="<?php echo $row['ID_materia']; ?>">
-                                    <?php echo $row['ID_materia'] . " - " . $row['nombreMateria']; ?>
-                                </option>
+                <div class="row">
+                    <!-- Primera columna para Datos del Alumno, Profesor y Materia -->
+                    <div class="col-md-6">
+                        <h4>Datos del Alumno</h4>
+                        <form method="GET" action="">
+                            <div class="mb-3">
+                                <label>Nombre Alumno:</label>
+                                <input class="form-control" type="text" value="<?php echo $nombre_completo; ?>" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label>DNI Alumno:</label>
+                                <input class="form-control" type="text" name="DNI" value="<?php echo $alumno_dni; ?>" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label>Seleccionar Profesor:</label>
+                                <select class="form-control" name="DNI_profesor" onchange="location = this.value;">
+                                    <option value="">Seleccione un profesor</option>
+                                    <?php while ($row = mysqli_fetch_assoc($profesores)) { ?>
+                                        <option value="?alumno=<?php echo $alumno_dni; ?>&DNI_profesor=<?php echo $row['DNI_profesor']; ?>"
+                                            <?php if ($dni_profesor == $row['DNI_profesor']) echo 'selected'; ?>>
+                                            <?php echo $row['DNI_profesor'] . " - " . $row['nombre']; ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                            <?php if ($dni_profesor) { ?>
+                                <div class="mb-3">
+                                    <label>Seleccionar Materia:</label>
+                                    <select class="form-control" name="ID_materia" required>
+                                        <option value="">Seleccione una materia</option>
+                                        <?php while ($row = mysqli_fetch_assoc($materias)) { ?>
+                                            <option value="<?php echo $row['ID_materia']; ?>"><?php echo $row['nombreMateria']; ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
                             <?php } ?>
-                        </select>
-                    <?php } ?>
+                        </form>
+                    </div>
 
-                    <label>Nota TP:</label>
-                    <input class="form-control" type="number" name="notaTP" min="1" max="10" required>
-
-                    <label>Nota Concepto:</label>
-                    <input class="form-control" type="number" name="notaConcepto" min="1" max="10" required>
-
-                    <label>Nota Examen:</label>
-                    <input class="form-control" type="number" name="notaExamen" min="1" max="10" required>
-
-                    <br>
-                    <input class="btn btn-primary" type="submit" value="Registrar Nota">
-                </form>
+                    <!-- Segunda columna para Registrar Notas -->
+                    <div class="col-md-6">
+                        <h4>Registrar Notas</h4>
+                        <form method="POST" action="">
+                            <div class="mb-3">
+                                <label>Nota TP:</label>
+                                <input class="form-control" type="number" name="notaTP" min="1" max="10" required>
+                            </div>
+                            <div class="mb-3">
+                                <label>Nota Concepto:</label>
+                                <input class="form-control" type="number" name="notaConcepto" min="1" max="10" required>
+                            </div>
+                            <div class="mb-3">
+                                <label>Nota Examen:</label>
+                                <input class="form-control" type="number" name="notaExamen" min="1" max="10" required>
+                            </div>
+                            <br>
+                            <input class="btn btn-primary" type="submit" value="Registrar Nota">
+                        </form>
+                    </div>
+                </div>
             </div>
     <?php
         }
