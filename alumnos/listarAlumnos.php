@@ -124,7 +124,7 @@ $total_paginas = ceil($total_records / $limite);
         <!-- Icono SVG arriba de los filtros, alineado a la derecha -->
         <div class="d-flex justify-content-end mb-3">
             <div class="image-container">
-                <a href="../profesores/form-alta-profesor.php">
+                <a href="../alumnos/form-alta-alumno.php">
                     <img src="../SVG/add.svg" alt="Añadir" class="add" style="width: 30px; height: 30px;">
                 </a>
             </div>
