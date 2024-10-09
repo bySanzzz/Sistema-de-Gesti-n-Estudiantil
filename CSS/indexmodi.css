@@ -2,7 +2,7 @@ form {
     background-color: #f9f9f9; /* Fondo claro */
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    box-shadow: 15px 15px 8px rgba(0, 0, 0, 0.1);
     max-width: 500px;
     margin: 20px auto;
     font-family: Arial, sans-serif;
@@ -31,7 +31,7 @@ form select {
 form input[type="submit"],
 form a {
     background-color: #2b8aaf; /* Color del botón */
-    color: #fff;
+    color: white;
     padding: 10px 20px;
     text-align: center;
     text-decoration: none;
@@ -41,7 +41,6 @@ form a {
     cursor: pointer;
     transition: background-color 0.3s ease;
     margin-top: 20px;
-
 }
 
 form input[type="submit"]:hover,

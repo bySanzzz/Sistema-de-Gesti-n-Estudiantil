@@ -31,7 +31,7 @@ body {
 }
 
 .Tabla input[type="submit"] {
-    background-color: #4CAF50;
+    background-color: #4caf50;
     color: white;
     cursor: pointer;
     border: none;
@@ -46,19 +46,15 @@ body {
     float: right; /* Coloca el contenedor a la derecha */
 }
 
-
-
-
 .query-container {
-    background-color: #ffffff; 
-    border: 2px solid #2b8aaf; 
+    background-color: #ffffff;
+    border: 2px solid #2b8aaf;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-    width: 80%; 
-    margin: 40px auto; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    margin: 40px auto;
 }
-
 
 .query-container h2 {
     color: #2b8aaf;
@@ -66,7 +62,6 @@ body {
     font-size: 1.5em;
     margin-bottom: 20px;
 }
-
 
 .query-container p {
     font-size: 1.2em;

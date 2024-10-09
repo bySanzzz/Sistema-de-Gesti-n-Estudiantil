@@ -141,7 +141,7 @@
             <!-- Mostrar la ultima fecha en la que se cargaron notas -->
             <div class="d-flex justify-content-between mt-4">
                 <h3>Boletin de Notas</h3>
-                <h5>Última fecha de carga de notas: <?php echo $row['ultima_fecha']; ?></h5>
+                <h5>Última fecha de carga de notas: <?php echo  date('d-m-Y', strtotime($row['ultima_fecha'])); ?></h5>
                 <!-- Boton para agregar notas boletin -->
                 <a class="btn-accion" href="registrar-notas-alumno.php?alumno=<?php echo $dni; ?>">
                     <img src="../SVG/add.svg" alt="Boletin" class="icono">
@@ -188,12 +188,12 @@
                     // Salida de datos de cada fila
                     while ($row = mysqli_fetch_assoc($result)) {
                         echo "<tr>";
-                        echo "<td>" . $row["nombreMateria"] . "</td>";
-                        echo "<td>" . $row["notaTP"] . "</td>";
-                        echo "<td>" . $row["notaExamen"] . "</td>";
-                        echo "<td>" . $row["notaConcepto"] . "</td>";
-                        echo "<td>" . $row["promedio"] . "</td>";
-                        echo "<td>" . $row["ultima_fecha"] . "</td>";  // Mostrar la última fecha
+                        echo "<td>" . htmlspecialchars($row["nombreMateria"]) . "</td>"; // Asegúrate de escapar datos para evitar XSS
+                        echo "<td>" . htmlspecialchars($row["notaTP"]) . "</td>";
+                        echo "<td>" . htmlspecialchars($row["notaExamen"]) . "</td>";
+                        echo "<td>" . htmlspecialchars($row["notaConcepto"]) . "</td>";
+                        echo "<td>" . htmlspecialchars($row["promedio"]) . "</td>";
+                        echo "<td>" . date('d-m-Y', strtotime($row['ultima_fecha'])) . "</td>";  // Mostrar la fecha en el formato deseado
                         echo "</tr>";
                     }
                     ?>

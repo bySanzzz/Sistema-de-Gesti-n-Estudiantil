@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../CSS/header.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         .container {
@@ -24,15 +25,15 @@
         }
 
         .registrar-notas {
-            background-color: darkgray;
-            color: black;
+            background-color: #1d7ca1;
+            color: white;
             padding: 20px;
             border-radius: 8px;
             flex: 1;
         }
 
         .form-label {
-            color: black;
+            color: white;
         }
 
         .form-control {
@@ -109,21 +110,37 @@
             '$notaTP', '$notaExamen', '$notaConcepto', '$promedio', '$alumno_dni', '$ID_materia')";
             $resultado = mysqli_query($con, $insert_query);
 
+            // Notificación de éxito con SweetAlert
             echo "<script>
-                Swal.fire({
-                    title: 'Nota registrada con éxito.',
-                    text: '¡La nota se ha guardado correctamente!',
-                    icon: 'success',
-                    showClass: {
-                        popup: 'animate__animated animate__fadeInUp animate__faster'
-                    },
-                    hideClass: {
-                        popup: 'animate__animated animate__fadeOutDown animate__faster'
-                    },
-                    confirmButtonText: '<a href=\"vista-boletin.php?alumno=$alumno_dni\" style=\"color:white; text-decoration:none;\">VOLVER</a>',
-                    confirmButtonColor: '#007bff'
-                });
-            </script>";
+        Swal.fire({
+            title: 'Nota Aprobada.',
+            html: '<p>¡La nota ha sido guardada correctamente!</p><div class=\"loading-bar\" style=\"width: 100%; height: 10px; background-color: #007bff;\"></div>',
+            icon: 'success',
+            showClass: {
+                popup: 'animate__animated animate__fadeInUp animate__faster'
+            },
+            hideClass: {
+                popup: 'animate__animated animate__fadeOutDown animate__faster'
+            },
+            showConfirmButton: false,
+            timer: 2000 // Duración total de la alerta
+        }).then(() => {
+            // Redirigir a la vista boletín después de la alerta
+            window.location.href = 'vista-boletin.php?alumno=$alumno_dni';
+        });
+
+        // Simular el progreso de la barra de carga
+        const loadingBar = document.querySelector('.loading-bar');
+        let width = 0;
+        const interval = setInterval(() => {
+            if (width >= 100) {
+                clearInterval(interval);
+            } else {
+                width++;
+                loadingBar.style.width = width + '%';
+            }
+        }, 20); // Ajusta la velocidad de la barra de carga aquí
+    </script>";
         } else {
     ?>
             <div class="container mt-4">
@@ -185,7 +202,7 @@
                 </form>
             </div>
             <div class="container" style="margin-bottom: 20px;">
-                <a class="btn btn-primary" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">Volver</a>
+                <a class="btn btn-primary" href="vista-boletin.php?alumno=<?php echo $alumno_dni; ?>">Volver</a>
             </div>
 
     <?php

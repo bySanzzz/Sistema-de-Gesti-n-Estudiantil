@@ -54,19 +54,23 @@ $queryCursos = "SELECT DISTINCT curso FROM alumnos";
 $resultCursos = mysqli_query($con, $queryCursos) or die("ERROR AL OBTENER CURSOS");
 
 // Construir la consulta con el filtro de estado, curso, búsqueda y orden
-$query = "SELECT DNI_alumno, nombre, apellido, curso, especialidad, fechaAlta, fechaBaja
-              FROM alumnos
-              WHERE baja = $status";
+$query = "SELECT alumnos.DNI_alumno, alumnos.nombre, alumnos.apellido, alumnos.curso, alumnos.especialidad, alumnos.fechaAlta, alumnos.fechaBaja, boletin.ID_boletin as tiene
+          FROM alumnos
+          LEFT JOIN boletin ON alumnos.DNI_alumno = boletin.DNI_alumno
+          WHERE alumnos.baja = $status";
 
 // Agregar el filtro de curso si se selecciona
 if (!empty($curso)) {
-    $query .= " AND curso = '$curso'";
+    $query .= " AND alumnos.curso = '$curso'";
 }
 
 // Agregar búsqueda si se introduce una búsqueda
 if (!empty($search)) {
-    $query .= " AND (nombre LIKE '%$search%' OR apellido LIKE '%$search%')";
+    $query .= " AND (alumnos.nombre LIKE '%$search%' OR alumnos.apellido LIKE '%$search%')";
 }
+
+// Agrupar por DNI_alumno y las demás columnas de alumnos
+$query .= " GROUP BY alumnos.DNI_alumno, alumnos.nombre, alumnos.apellido, alumnos.curso, alumnos.especialidad, alumnos.fechaAlta, alumnos.fechaBaja";
 
 // Agregar orden por la columna seleccionada
 $query .= " ORDER BY $orderBy";
@@ -208,7 +212,7 @@ $total_paginas = ceil($total_records / $limite);
                             <td><?php echo $row['apellido']; ?></td>
                             <td><?php echo $row['curso']; ?></td>
                             <td><?php echo $row['especialidad']; ?></td>
-                            <td><?php echo $row['fechaAlta']; ?></td>
+                            <td><?php echo date('d-m-Y', strtotime($row['fechaAlta'])); ?></td>
                             <td><?php echo $row['fechaEliminacion']; ?></td>
                             <td><?php echo $row['usuarioEncargado']; ?></td>
                             <td class="acciones">
@@ -223,6 +227,8 @@ $total_paginas = ceil($total_records / $limite);
                     <?php } ?>
                 </tbody>
             </table>
+
+
 
         <?php } elseif ($status === '1') { ?>
             <!-- Tabla de alumnos inactivos -->
@@ -247,8 +253,8 @@ $total_paginas = ceil($total_records / $limite);
                             <td><?php echo $row['apellido']; ?></td>
                             <td><?php echo $row['curso']; ?></td>
                             <td><?php echo $row['especialidad']; ?></td>
-                            <td><?php echo $row['fechaAlta']; ?></td>
-                            <td><?php echo $row['fechaBaja']; ?></td>
+                            <td><?php echo date('d-m-Y', strtotime($row['fechaAlta'])); ?></td>
+                            <td><?php echo date('d-m-Y', strtotime($row['fechaBaja'])); ?></td>
                             <td class="acciones">
                                 <a class="btn-accion" href="listar-modi-alumno.php?alumno=<?php echo $row['DNI_alumno']; ?>">
                                     <img src="../SVG/lapiz.svg" alt="Modificar" class="icono" width="24px">
@@ -259,7 +265,7 @@ $total_paginas = ceil($total_records / $limite);
                                         <img src="../SVG/si.svg" alt="Eliminar" class="icono">
                                     </button>
                                 </form>
-                                <?php if (isset($row['tiene'])) { ?>
+                                <?php if (isset($row['tiene']) && $row['tiene'] > 0) { ?>
                                     <a class="btn-accion" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">
                                         <img src="../SVG/libro.svg" alt="Boletín" class="icono" width="24px">
                                     </a>
@@ -296,7 +302,7 @@ $total_paginas = ceil($total_records / $limite);
                             <td><?php echo $row['apellido']; ?></td>
                             <td><?php echo $row['curso']; ?></td>
                             <td><?php echo $row['especialidad']; ?></td>
-                            <td><?php echo $row['fechaAlta']; ?></td>
+                            <td><?php echo date('d-m-Y', strtotime($row['fechaAlta'])); ?></td>
                             <td class="acciones">
                                 <a class="btn-accion" href="listar-modi-alumno.php?alumno=<?php echo $row['DNI_alumno']; ?>">
                                     <img src="../SVG/lapiz.svg" alt="Modificar" class="icono" width="24px">
@@ -307,7 +313,7 @@ $total_paginas = ceil($total_records / $limite);
                                         <img src="../SVG/si.svg" alt="Eliminar" class="icono">
                                     </button>
                                 </form>
-                                <?php if (isset($row['tiene'])) { ?>
+                                <?php if (isset($row['tiene']) && $row['tiene'] > 0) { ?>
                                     <a class="btn-accion" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">
                                         <img src="../SVG/libro.svg" alt="Boletín" class="icono" width="24px">
                                     </a>

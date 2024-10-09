@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="../CSS/header.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
     <header>
         <div class="prese">
@@ -21,13 +23,13 @@
                 <div class="svg-container">
                     <svg width="50px" height="50px" viewBox="-2.4 -2.4 28.80 28.80" xmlns="http://www.w3.org/2000/svg" fill="#ffffff" stroke="#ffffff">
                         <g id="SVGRepo_bgCarrier" stroke-width="0">
-                            <rect x="-2.4" y="-2.4" width="28.80" height="28.80" rx="0" fill="#2b8aaf" stroke-width="0"/>
+                            <rect x="-2.4" y="-2.4" width="28.80" height="28.80" rx="0" fill="#2b8aaf" stroke-width="0" />
                         </g>
-                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
                         <g id="SVGRepo_iconCarrier">
-                            <rect x="0" fill="none" width="24" height="24"/>
+                            <rect x="0" fill="none" width="24" height="24" />
                             <g>
-                                <path d="M4 19h16v-2H4v2zm16-6H4v2h16v-2zM4 9v2h16V9H4zm16-4H4v2h16V5z"/>
+                                <path d="M4 19h16v-2H4v2zm16-6H4v2h16v-2zM4 9v2h16V9H4zm16-4H4v2h16V5z" />
                             </g>
                         </g>
                     </svg>
@@ -40,22 +42,25 @@
                     <div class="svg-container">
                         <svg width="50px" height="50px" viewBox="-2.4 -2.4 28.80 28.80" xmlns="http://www.w3.org/2000/svg" fill="#ffffff" stroke="#ffffff">
                             <g id="SVGRepo_bgCarrier" stroke-width="0">
-                                <rect x="-2.4" y="-2.4" width="28.80" height="28.80" rx="0" fill="#333" stroke-width="0"/>
+                                <rect x="-2.4" y="-2.4" width="28.80" height="28.80" rx="0" fill="#333" stroke-width="0" />
                             </g>
-                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
                             <g id="SVGRepo_iconCarrier">
-                                <rect x="0" fill="none" width="24" height="24"/>
+                                <rect x="0" fill="none" width="24" height="24" />
                                 <g>
-                                    <path d="M4 19h16v-2H4v2zm16-6H4v2h16v-2zM4 9v2h16V9H4zm16-4H4v2h16V5z"/>
-                            </g>
+                                    <path d="M4 19h16v-2H4v2zm16-6H4v2h16v-2zM4 9v2h16V9H4zm16-4H4v2h16V5z" />
+                                </g>
                         </svg>
                     </div>
                 </button>
             </div>
             <ul>
-                <h2><li><a href="http://localhost:8080/escuela1/">Principal</a></li></h2>
-                <h2><li><a class="nav" href="#">Profesores</a></li></h2>
-                <h2><li><a class="nav" href="#">Registros</a></li></h2>
+                <h2>
+                    <li><a href="http://localhost:8080/escuela1/">Principal</a></li>
+                </h2>
+                <h2>
+                    <li><a class="nav" href="#">Profesores</a></li>
+                </h2>
             </ul>
             <div class="logo">
                 <img src="../Imagenes/sanmiguel.png" alt="Logo San Miguel">
@@ -72,23 +77,22 @@
                     <input type="text" name="Nombre" class="input-field" placeholder="Nombre" required><br>
                     <input type="text" name="Apellido" class="input-field" placeholder="Apellido" required><br>
                     <div class='col-md-4'>
-    <label for='materiaSelect'>Seleccionar Materia:</label>
-    <select class='form-select' id='materiaSelect' name="Especialidad" required style="width: 260px
+                        <select class='form-select' id='materiaSelect' name="Especialidad" required style="width: 260px
     ">
-        <option value="" disabled selected>Especialidad</option>
-        <option value='Matemática'>Matemática</option>
-        <option value='Física'>Física</option>
-        <option value='Electrónica'>Electrónica</option>
-        <option value='Historia'>Historia</option>
-        <option value='Informática'>Informática</option>
-        <option value='Construcciones'>Construcciones</option>
-        <option value='Biología'>Biología</option>
-        <option value='Educación Física'>Educación Física</option>
-        <option value='Programación'>Programación</option>
-        <option value='Lengua'>Lengua</option>
-        <option value='Biología Molecular'>Biología Molecular</option>
-    </select>
-</div>
+                            <option value="" disabled selected>Especialidad</option>
+                            <option value='Matemática'>Matemática</option>
+                            <option value='Física'>Física</option>
+                            <option value='Electrónica'>Electrónica</option>
+                            <option value='Historia'>Historia</option>
+                            <option value='Informática'>Informática</option>
+                            <option value='Construcciones'>Construcciones</option>
+                            <option value='Biología'>Biología</option>
+                            <option value='Educación Física'>Educación Física</option>
+                            <option value='Programación'>Programación</option>
+                            <option value='Lengua'>Lengua</option>
+                            <option value='Biología Molecular'>Biología Molecular</option>
+                        </select>
+                    </div>
 
                     <input type="submit" value="Registrar" class="submit-button">
                 </form>
@@ -114,10 +118,10 @@
 
                     if (mysqli_num_rows($check_result) > 0) {
                         echo "<div class='alert alert-danger'>El DNI '$dni' ya existe en la base de datos.</div>";
-                        echo "<a href='".$_SERVER['PHP_SELF']."'>Volver al formulario</a>";
+                        echo "<a href='" . $_SERVER['PHP_SELF'] . "'>Volver al formulario</a>";
                     } else {
                         // Si el DNI no existe, insertar el nuevo profesor
-                        $insert_query = "INSERT INTO profesor (DNI_profesor, nombre, apellido, especialidad, baja) VALUES 
+                        $insert_query = "INSERT INTO profesor (DNI_profesor, nombre, apellido, especialidad, baja) VALUES
                         ('$dni', '$nombre', '$apellido', '$especialidad', '$baja')";
 
                         if (mysqli_query($con, $insert_query)) {
@@ -139,4 +143,5 @@
 
     <script src="../JavaScript/menu.js"></script>
 </body>
+
 </html>
