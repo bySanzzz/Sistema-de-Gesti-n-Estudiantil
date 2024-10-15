@@ -347,30 +347,36 @@ $total_paginas = ceil($total_records / $limite);
     </div>
 
     <script>
-        // Función que se llama en cada tecla presionada
-        document.getElementById('searchInput').addEventListener('input', function() {
-            changeFilter();
-        });
+    // Función que se llama en cada tecla presionada
+    document.getElementById('searchInput').addEventListener('input', function() {
+        changeFilter();
+    });
 
-        function changeFilter() {
-            const orderBy = document.getElementById('orderSelect').value;
-            const status = document.getElementById('statusSelect').value;
-            const curso = document.getElementById('cursoSelect').value;
-            const search = document.getElementById('searchInput').value;
+    function changeFilter() {
+        const orderBy = document.getElementById('orderSelect').value;
+        const status = document.getElementById('statusSelect').value;
+        const curso = document.getElementById('cursoSelect').value;
+        const search = document.getElementById('searchInput').value;
 
-            // Crear la URL con los parámetros
-            const url = `?pagina=<?php echo $pagina_actual; ?>&orderBy=${orderBy}&status=${status}&curso=${curso}&search=${search}`;
+        // Actualizar la URL con los parámetros
+        //window.location.href = `?orderBy=${orderBy}&status=${status}&curso=${curso}`;
 
-            // Realizar solicitud AJAX
-            fetch(url)
-                .then(response => response.text())
-                .then(html => {
-                    document.querySelector('tbody').innerHTML = new DOMParser().parseFromString(html, 'text/html').querySelector('tbody').innerHTML;
-                })
-                .catch(error => console.error('Error:', error));
-        }
+        // Crear la URL con los parámetros
+        const url = `?pagina=<?php echo $pagina_actual; ?>&orderBy=${orderBy}&status=${status}&curso=${curso}&search=${search}`;
 
-    </script>
+        // Realizar solicitud AJAX
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                // Obtener el contenido de la tabla
+                const tableContent = new DOMParser().parseFromString(html, 'text/html').querySelector('table').outerHTML;
+
+                // Actualizar la tabla
+                document.querySelector('table').outerHTML = tableContent;
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
 
 </body>
 
