@@ -5,7 +5,7 @@ $con = mysqli_connect($host, $user, $pwd, $BD) or die("FALLO DE CONEXION");
 
 
 // Definir el número de resultados por página
-$limite = 7;
+$limite = 8;
 
 // Obtener la página actual desde la URL, si no se define, será la primera página
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
@@ -18,7 +18,6 @@ $sql = "SELECT * FROM alumnos LIMIT $limite OFFSET $offset";
 $result = mysqli_query($con, $sql);
 
 
-//santi trbajas muy mal
 // Contar el total de registros en la tabla
 $sql_total = "SELECT COUNT(*) as total FROM alumnos";
 $total_result = mysqli_query($con, $sql_total);

@@ -22,22 +22,23 @@ if (!in_array($status, $validStatus)) {
 }
 
 // Construir la consulta con el filtro de estado, curso, búsqueda y orden
-$query = "SELECT DNI_alumno, nombre, apellido, curso, especialidad, fechaAlta, fechaBaja
+$query = "SELECT alumnos.DNI_alumno, alumnos.nombre, alumnos.apellido, alumnos.curso, alumnos.especialidad, alumnos.fechaAlta, alumnos.fechaBaja, COUNT(boletin.DNI_alumno) AS tiene
           FROM alumnos
-          WHERE baja = $status";
+          LEFT JOIN boletin ON alumnos.DNI_alumno = boletin.DNI_alumno
+          WHERE alumnos.baja = $status";
 
 // Agregar el filtro de curso si se selecciona
 if (!empty($curso)) {
-    $query .= " AND curso = '$curso'";
+    $query .= " AND alumnos.curso = '$curso'";
 }
 
 // Agregar búsqueda si se introduce una búsqueda
 if (!empty($search)) {
-    $query .= " AND (nombre LIKE '%$search%' OR apellido LIKE '%$search%')";
+    $query .= " AND (alumnos.nombre LIKE '%$search%' OR alumnos.apellido LIKE '%$search%')";
 }
 
 // Agregar orden por la columna seleccionada
-$query .= " ORDER BY $orderBy";
+$query .= " GROUP BY alumnos.DNI_alumno ORDER BY alumnos.$orderBy";
 
 // Agregar la limitación de paginación
 $query .= " LIMIT $limite OFFSET $offset";
@@ -45,30 +46,38 @@ $query .= " LIMIT $limite OFFSET $offset";
 // Ejecutar consulta
 $result = mysqli_query($con, $query) or die("ERROR AL OBTENER ALUMNOS");
 
-$estadoLibro = isset($_GET['alumno']) ? $_GET['alumno'] : null;
-
 // Generar la tabla de resultados
 while ($row = mysqli_fetch_assoc($result)) {
     echo "<tr>";
-    echo "<td>" . $row['DNI_alumno'] . "</td>";
-    echo "<td>" . $row['nombre'] . "</td>";
-    echo "<td>" . $row['apellido'] . "</td>";
-    echo "<td>" . $row['curso'] . "</td>";
-    echo "<td>" . $row['especialidad'] . "</td>";
-    echo "<td>" . $row['fechaAlta'] . "</td>";
-    echo "<td class='acciones'>
-            <a class='btn-accion' href='listar-modi-alumno.php?alumno=" . $row['DNI_alumno'] . "'>
-                <img src='../SVG/lapiz.svg' alt='Modificar' class='icono' width='24px'>
-            </a>
-            <form method='POST' action='listar-delete-alumno.php' style='display:inline;'>
-                <input type='hidden' name='DNI' value='" . $row['DNI_alumno'] . "'>
-                <button type='submit' class='btn-accion'>
-                    <img src='../SVG/si.svg' alt='Eliminar' class='icono'>
-                </button>
-            </form>
-            <a class='btn-accion' href='vista-boletin.php?alumno=" . $row['DNI_alumno'] . "'>
-                <img src='../SVG/" . $estadoLibro . "' alt='Boletín' class='icono' width='24px'>
-            </a>
-        </td>";
+        echo "<td>" . $row['DNI_alumno'] . "</td>";
+        echo "<td>" . $row['nombre'] . "</td>";
+        echo "<td>" . $row['apellido'] . "</td>";
+        echo "<td>" . $row['curso'] . "</td>";
+        echo "<td>" . $row['especialidad'] . "</td>";
+        echo "<td>" . $row['fechaAlta'] . "</td>";
+        echo "<td class='acciones'>
+                <a class='btn-accion' href='listar-modi-alumno.php?alumno=" . $row['DNI_alumno'] . "'>
+                    <img src='../SVG/lapiz.svg' alt='Modificar' class='icono' width='24px'>
+                </a>
+                <form method='POST' action='listar-delete-alumno.php' style='display:inline;'>
+                    <input type='hidden' name='DNI' value='" . $row['DNI_alumno'] . "'>
+                    <button type='submit' class='btn-accion'>
+                        <img src='../SVG/si.svg' alt='Eliminar' class='icono'>
+                    </button>
+                </form>";
+    
+    // Validar si el alumno tiene boletín
+    if (isset($row['tiene']) && $row['tiene'] > 0) {
+        echo "<a class='btn-accion' href='vista-boletin.php?alumno=" . $row['DNI_alumno'] . "'>
+                <img src='../SVG/libro.svg' alt='Boletín' class='icono' width='24px'>
+              </a>";
+    } else {
+        echo "<a class='btn-accion' href='vista-boletin.php?alumno=" . $row['DNI_alumno'] . "'>
+                <img src='../SVG/librovacio.svg' alt='Boletín' class='icono' width='24px'>
+              </a>";
+    }
+
+    echo "</td>";
     echo "</tr>";
 }
+?>
