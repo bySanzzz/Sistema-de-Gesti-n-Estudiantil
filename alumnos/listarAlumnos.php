@@ -3,10 +3,9 @@ include("../conexion.php");
 
 $con = mysqli_connect($host, $user, $pwd, $BD) or die("FALLO DE CONEXION");
 
-
+//-----------------------------------------------------------------PAGINADO
 // Definir el número de resultados por página
 $limite = 8;
-
 // Obtener la página actual desde la URL, si no se define, será la primera página
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 
@@ -17,7 +16,6 @@ $offset = ($pagina_actual - 1) * $limite;
 $sql = "SELECT * FROM alumnos LIMIT $limite OFFSET $offset";
 $result = mysqli_query($con, $sql);
 
-
 // Contar el total de registros en la tabla
 $sql_total = "SELECT COUNT(*) as total FROM alumnos";
 $total_result = mysqli_query($con, $sql_total);
@@ -27,26 +25,27 @@ $total_registros = $total_row['total'];
 // Calcular el número total de páginas
 $total_paginas = ceil($total_registros / $limite);
 
-// Generar los enlaces de paginación
+//----------------------------------------------------------------PAGINADO
 
 
-
+//----------------------------------------------------------------ORDEN TABLA
 // Inicializar variables de filtro
 $orderBy = isset($_GET['orderBy']) ? $_GET['orderBy'] : 'nombre';
 $status = isset($_GET['status']) ? $_GET['status'] : '0';
 $curso = isset($_GET['curso']) ? $_GET['curso'] : '';
 $search = isset($_GET['search']) ? $_GET['search'] : ''; // Nueva variable de búsqueda
 
-// Validación de columnas y estado
+// Validación para evitar inyecciones SQL en la variable de ordenamiento
 $validColumns = ['nombre', 'apellido', 'fechaAlta'];
 if (!in_array($orderBy, $validColumns)) {
-    $orderBy = 'nombre';
+    $orderBy = 'nombre'; // Default si no es válido
 }
 
-$validStatus = ['0', '1', '2'];
-if (!in_array($status, $validStatus)) {
-    $status = '0';
-}
+// Validación del filtro de estado
+        $validStatus = ['0', '1', '2']; // 0 = Activos, 1 = Inactivos, 2 = Eliminados
+        if (!in_array($status, $validStatus)) {
+            $status = '0'; // Default si no es válido
+        }
 
 // Obtener los cursos para el filtro
 $queryCursos = "SELECT DISTINCT curso FROM alumnos";
@@ -145,9 +144,9 @@ $total_paginas = ceil($total_records / $limite);
             <div class='col-md-3'>
                 <label for='statusSelect'>Mostrar:</label>
                 <select class='form-select' id='statusSelect' onchange='changeFilter()'>
-                    <option value='0' <?php echo $status == '0' ? 'selected' : ''; ?>>ACTIVOS</option>
-                    <option value='1' <?php echo $status == '1' ? 'selected' : ''; ?>>INACTIVOS</option>
-                    <option value='2' <?php echo $status == '2' ? 'selected' : ''; ?>>ELIMINADOS</option>
+                    <option value='0' <?php echo isset($status) && $status == '0' ? 'selected' : ''; ?>>ACTIVOS</option>
+                    <option value='1' <?php echo isset($status) && $status == '1' ? 'selected' : ''; ?>>INACTIVOS</option>
+                    <option value='2' <?php echo isset($status) && $status == '2' ? 'selected' : ''; ?>>ELIMINADOS</option>
                 </select>
             </div>
             <div class='col-md-3'>
@@ -179,7 +178,7 @@ $total_paginas = ceil($total_records / $limite);
         if ($status === '2') {
             // Mostrar la tabla de eliminados
             $query = "SELECT * FROM respaldoalumnos";
-
+            
             // Agregar el filtro de curso si está seleccionado
             if (!empty($curso)) {
                 $query .= " WHERE curso = '$curso'";
@@ -231,6 +230,7 @@ $total_paginas = ceil($total_records / $limite);
 
         <?php } elseif ($status === '1') { ?>
             <!-- Tabla de alumnos inactivos -->
+            
             <table class='table table-striped'>
                 <thead class='table-sky-blue'>
                     <tr>
@@ -329,7 +329,9 @@ $total_paginas = ceil($total_records / $limite);
                 </tbody>
             </table>
 
-        <?php } ?>
+        <?php  } echo($status); ?>
+    
+
         <nav aria-label='Paginación'>
             <ul class='pagination justify-content-center'>
                 <?php for ($i = 1; $i <= $total_paginas; $i++) { ?>
@@ -356,17 +358,18 @@ $total_paginas = ceil($total_records / $limite);
             const curso = document.getElementById('cursoSelect').value;
             const search = document.getElementById('searchInput').value;
 
+            // Crear la URL con los parámetros
+            const url = `?pagina=<?php echo $pagina_actual; ?>&orderBy=${orderBy}&status=${status}&curso=${curso}&search=${search}`;
+
             // Realizar solicitud AJAX
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', `buscarAlumno.php?orderBy=${orderBy}&status=${status}&curso=${curso}&search=${search}`, true);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    // Actualizar la tabla con los resultados
-                    document.querySelector('tbody').innerHTML = xhr.responseText;
-                }
-            };
-            xhr.send();
+            fetch(url)
+                .then(response => response.text())
+                .then(html => {
+                    document.querySelector('tbody').innerHTML = new DOMParser().parseFromString(html, 'text/html').querySelector('tbody').innerHTML;
+                })
+                .catch(error => console.error('Error:', error));
         }
+
     </script>
 
 </body>
