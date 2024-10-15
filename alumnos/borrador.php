@@ -31,7 +31,7 @@
 
     // Agregar el filtro de curso si se selecciona
     if (!empty($curso)) {
-        $query .= " AND curso = '$curso'";
+        $query .= " AND curso = '$curso'"; //otro cambio minimo mi gente  para wasaaa  
     }
 
     // Agregar búsqueda si se introduce una búsqueda
