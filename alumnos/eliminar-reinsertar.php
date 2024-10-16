@@ -107,7 +107,7 @@
 
         // Si existe el alumno en respaldoAlumnos
         if ($alumno) {
-            print_r($alumno);
+            //print_r($alumno);
     ?>
             <form method="POST" action="" id="reintegrarForm">
                 DNI: <input type="text" name="modiDNI" value="<?php echo $alumno['DNI_alumno']; ?>" readonly><br>

@@ -180,63 +180,149 @@ $total_paginas = ceil($total_records / $limite);
             $result = mysqli_query($con, $query) or die("ERROR DE CONSULTA");
         ?>
 
-            <!-- Mostrar tabla de alumnos eliminados -->
-            <div class='container mt-4'>
-                <h3 class='text-center'>Alumnos Eliminados</h3>
-                <table class='table table-striped'>
-                    <thead>
+            <table class='table table-striped'>
+                <thead class='table-sky-blue'>
+                    <tr>
+                        <th>DNI</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Curso</th>
+                        <th>Especialidad</th>
+                        <th>Alta</th>
+                        <th>Eliminación</th>
+                        <th>Usuario Encargado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($row = mysqli_fetch_array($result)) { ?>
                         <tr>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
-                            <th>Curso</th>
-                            <th>Fecha de Alta</th>
+                            <td><?php echo $row['DNI_alumno']; ?></td>
+                            <td><?php echo $row['nombre']; ?></td>
+                            <td><?php echo $row['apellido']; ?></td>
+                            <td><?php echo $row['curso']; ?></td>
+                            <td><?php echo $row['especialidad']; ?></td>
+                            <td><?php echo date('d-m-Y', strtotime($row['fechaAlta'])); ?></td>
+                            <td><?php echo $row['fechaEliminacion']; ?></td>
+                            <td><?php echo $row['usuarioEncargado']; ?></td>
+                            <td class="acciones">
+                                <form method="POST" action="eliminar-reinsertar.php" style="display:inline;">
+                                    <input type="hidden" name="alumno" value="<?php echo $row['ID']; ?>">
+                                    <button type="submit" class="btn-accion" onclick="return confirm('¿Está seguro de que desea reinsertar este alumno?');">
+                                        <img src="../Imagenes/return.png" alt="reinsertar" class="icono" width="24px">
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <?php while ($row = mysqli_fetch_array($result)) { ?>
-                            <tr>
-                                <td><?php echo $row['nombre']; ?></td>
-                                <td><?php echo $row['apellido']; ?></td>
-                                <td><?php echo $row['curso']; ?></td>
-                                <td><?php echo $row['fechaAlta']; ?></td>
-                            </tr>
-                        <?php } ?>
-                    </tbody>
-                </table>
-            </div>
+                    <?php } ?>
+                </tbody>
+            </table>
 
-        <?php
-        } else {
-        ?>
-            <!-- Mostrar tabla de alumnos activos o inactivos -->
-            <div class='container mt-4'>
-                <table class='table table-striped'>
-                    <thead>
+            <?php } elseif ($status === '1') { ?>
+            <!-- Tabla de alumnos inactivos -->
+            
+            <table class='table table-striped'>
+                <thead class='table-sky-blue'>
+                    <tr>
+                        <th>DNI</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Curso</th>
+                        <th>Especialidad</th>
+                        <th>Alta</th>
+                        <th>Baja</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($row = mysqli_fetch_array($result)) { ?>
                         <tr>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
-                            <th>Curso</th>
-                            <th>Especialidad</th>
-                            <th>Fecha de Alta</th>
-                            <th>Fecha de Baja</th>
+                            <td><?php echo $row['DNI_alumno']; ?></td>
+                            <td><?php echo $row['nombre']; ?></td>
+                            <td><?php echo $row['apellido']; ?></td>
+                            <td><?php echo $row['curso']; ?></td>
+                            <td><?php echo $row['especialidad']; ?></td>
+                            <td><?php echo date('d-m-Y', strtotime($row['fechaAlta'])); ?></td>
+                            <td><?php echo date('d-m-Y', strtotime($row['fechaBaja'])); ?></td>
+                            <td class="acciones">
+                                <a class="btn-accion" href="listar-modi-alumno.php?alumno=<?php echo $row['DNI_alumno']; ?>">
+                                    <img src="../SVG/lapiz.svg" alt="Modificar" class="icono" width="24px">
+                                </a>
+                                <form method="POST" action="listar-delete-alumno.php" style="display:inline;">
+                                    <input type="hidden" name="DNI" value="<?php echo $row['DNI_alumno']; ?>">
+                                    <button type="submit" class="btn-accion">
+                                        <img src="../SVG/si.svg" alt="Eliminar" class="icono">
+                                    </button>
+                                </form>
+                                <?php if (isset($row['tiene']) && $row['tiene'] > 0) { ?>
+                                    <a class="btn-accion" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">
+                                        <img src="../SVG/libro.svg" alt="Boletín" class="icono" width="24px">
+                                    </a>
+                                <?php } else { ?>
+                                    <a class="btn-accion" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">
+                                        <img src="../SVG/librovacio.svg" alt="Boletín" class="icono" width="24px">
+                                    </a>
+                                <?php } ?>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <?php while ($row = mysqli_fetch_array($result)) { ?>
-                            <tr>
-                                <td><?php echo $row['nombre']; ?></td>
-                                <td><?php echo $row['apellido']; ?></td>
-                                <td><?php echo $row['curso']; ?></td>
-                                <td><?php echo $row['especialidad']; ?></td>
-                                <td><?php echo $row['fechaAlta']; ?></td>
-                                <td><?php echo $row['fechaBaja']; ?></td>
-                            </tr>
-                        <?php } ?>
-                    </tbody>
-                </table>
-            </div>
+                    <?php } ?>
+                </tbody>
+            </table>
 
-        <?php } ?>
+        <?php } else { ?>
+            <!-- Tabla de alumnos activos -->
+            <table class='table table-striped'>
+                <thead class='table-sky-blue'>
+                    <tr>
+                        <th>DNI</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Curso</th>
+                        <th>Especialidad</th>
+                        <th>Alta</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Aquí se actualizarán los resultados con AJAX -->
+                    <?php while ($row = mysqli_fetch_array($result)) { ?>
+                        <tr>
+                            <td><?php echo $row['DNI_alumno']; ?></td>
+                            <td><?php echo $row['nombre']; ?></td>
+                            <td><?php echo $row['apellido']; ?></td>
+                            <td><?php echo $row['curso']; ?></td>
+                            <td><?php echo $row['especialidad']; ?></td>
+                            <td><?php echo date('d-m-Y', strtotime($row['fechaAlta'])); ?></td>
+                            <td class="acciones">
+                                <a class="btn-accion" href="listar-modi-alumno.php?alumno=<?php echo $row['DNI_alumno']; ?>">
+                                    <img src="../SVG/lapiz.svg" alt="Modificar" class="icono" width="24px">
+                                </a>
+                                <form method="POST" action="listar-delete-alumno.php" style="display:inline;">
+                                    <input type="hidden" name="DNI" value="<?php echo $row['DNI_alumno']; ?>">
+                                    <button type="submit" class="btn-accion">
+                                        <img src="../SVG/si.svg" alt="Eliminar" class="icono">
+                                    </button>
+                                </form>
+                                <?php if (isset($row['tiene']) && $row['tiene'] > 0) { ?>
+                                    <a class="btn-accion" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">
+                                        <img src="../SVG/libro.svg" alt="Boletín" class="icono" width="24px">
+                                    </a>
+                                    <a class="btn-accion" hidden href="buscarAlumno.php?alumno=libro.svg"> </a>
+                                <?php } else { ?>
+                                    <a class="btn-accion" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">
+                                        <img src="../SVG/librovacio.svg" alt="Boletín" class="icono" width="24px">
+                                    </a>
+                                    <a class="btn-accion" hidden href="buscarAlumno.php?alumno=librovacio.svg"> </a>
+                                <?php } ?>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+
+        <?php  }  ?>
+    
+
 
         <!-- Mostrar la paginación -->
         <nav aria-label='Page navigation'>
