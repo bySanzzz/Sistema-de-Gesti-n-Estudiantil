@@ -347,36 +347,44 @@ $total_paginas = ceil($total_records / $limite);
     </div>
 
     <script>
-    // Función que se llama en cada tecla presionada
-    document.getElementById('searchInput').addEventListener('input', function() {
-        changeFilter();
-    });
+// Función que se llama en cada tecla presionada
+document.getElementById('searchInput').addEventListener('input', function() { 
+    console.log('Tecla presionada');
+    changeFilter(); 
+});
 
-    function changeFilter() {
-        const orderBy = document.getElementById('orderSelect').value;
-        const status = document.getElementById('statusSelect').value;
-        const curso = document.getElementById('cursoSelect').value;
-        const search = document.getElementById('searchInput').value;
+function changeFilter() {
+    const orderBy = document.getElementById('orderSelect').value;
+    const status = document.getElementById('statusSelect').value;
+    const curso = document.getElementById('cursoSelect').value;
+    const search = document.getElementById('searchInput').value;
 
-        // Actualizar la URL con los parámetros
-        //window.location.href = `?orderBy=${orderBy}&status=${status}&curso=${curso}`;
+    // Verificar los valores de los filtros
+    console.log(`Ordenar por: ${orderBy}, Estado: ${status}, Curso: ${curso}, Búsqueda: ${search}`);
 
-        // Crear la URL con los parámetros
-        const url = `?pagina=<?php echo $pagina_actual; ?>&orderBy=${orderBy}&status=${status}&curso=${curso}&search=${search}`;
+    // Crear la URL con los parámetros
+    const url = `?pagina=<?php echo $pagina_actual; ?>&orderBy=${orderBy}&status=${status}&curso=${curso}&search=${search}`;
+    console.log('URL generada:', url);
 
-        // Realizar solicitud AJAX
-        fetch(url)
-            .then(response => response.text())
-            .then(html => {
-                // Obtener el contenido de la tabla
-                const tableContent = new DOMParser().parseFromString(html, 'text/html').querySelector('table').outerHTML;
-
-                // Actualizar la tabla
-                document.querySelector('table').outerHTML = tableContent;
-            })
-            .catch(error => console.error('Error:', error));
-    }
+    // Realizar solicitud AJAX
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error en la respuesta de la solicitud AJAX');
+            }
+            return response.text();
+        })
+        .then(html => {
+            console.log('Respuesta recibida');
+            // Obtener el contenido de la tabla
+            const tableContent = new DOMParser().parseFromString(html, 'text/html').querySelector('table').outerHTML;
+            // Actualizar la tabla
+            document.querySelector('table').outerHTML = tableContent;
+        })
+        .catch(error => console.error('Error:', error));
+}
 </script>
+
 
 </body>
 
