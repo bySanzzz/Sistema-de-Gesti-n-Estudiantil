@@ -12,22 +12,6 @@ $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 // Calcular el desplazamiento (OFFSET) para la consulta
 $offset = ($pagina_actual - 1) * $limite;
 
-// Realizar la consulta para obtener los resultados de la página actual
-$sql = "SELECT * FROM alumnos LIMIT $limite OFFSET $offset";
-$result = mysqli_query($con, $sql);
-
-// Contar el total de registros en la tabla
-$sql_total = "SELECT COUNT(*) as total FROM alumnos";
-$total_result = mysqli_query($con, $sql_total);
-$total_row = mysqli_fetch_assoc($total_result);
-$total_registros = $total_row['total'];
-
-// Calcular el número total de páginas
-$total_paginas = ceil($total_registros / $limite);
-
-//----------------------------------------------------------------PAGINADO
-
-
 //----------------------------------------------------------------ORDEN TABLA
 // Inicializar variables de filtro
 $orderBy = isset($_GET['orderBy']) ? $_GET['orderBy'] : 'nombre';
@@ -42,15 +26,16 @@ if (!in_array($orderBy, $validColumns)) {
 }
 
 // Validación del filtro de estado
-        $validStatus = ['0', '1', '2']; // 0 = Activos, 1 = Inactivos, 2 = Eliminados
-        if (!in_array($status, $validStatus)) {
-            $status = '0'; // Default si no es válido
-        }
+$validStatus = ['0', '1', '2']; // 0 = Activos, 1 = Inactivos, 2 = Eliminados
+if (!in_array($status, $validStatus)) {
+    $status = '0'; // Default si no es válido
+}
 
 // Obtener los cursos para el filtro
 $queryCursos = "SELECT DISTINCT curso FROM alumnos";
 $resultCursos = mysqli_query($con, $queryCursos) or die("ERROR AL OBTENER CURSOS");
 
+//-----------------------------------------------------------------CONSULTA PRINCIPAL
 // Construir la consulta con el filtro de estado, curso, búsqueda y orden
 $query = "SELECT alumnos.DNI_alumno, alumnos.nombre, alumnos.apellido, alumnos.curso, alumnos.especialidad, alumnos.fechaAlta, alumnos.fechaBaja, boletin.ID_boletin as tiene
           FROM alumnos
@@ -177,215 +162,115 @@ $total_paginas = ceil($total_records / $limite);
         <?php
         if ($status === '2') {
             // Mostrar la tabla de eliminados
-            $query = "SELECT * FROM respaldoalumnos";
-            
-            // Agregar el filtro de curso si está seleccionado
+            $query = "SELECT * FROM respaldoalumnos WHERE 1=1";
+
+            // Filtro de curso
             if (!empty($curso)) {
-                $query .= " WHERE curso = '$curso'";
+                $query .= " AND curso = '$curso'";
             }
 
-            $query .= " ORDER BY $orderBy";
+            // Filtro de búsqueda
+            if (!empty($search)) {
+                $query .= " AND (nombre LIKE '%$search%' OR apellido LIKE '%$search%')";
+            }
+
+            // Ordenar por la columna seleccionada
+            $query .= " ORDER BY $orderBy LIMIT $limite OFFSET $offset";
+
             $result = mysqli_query($con, $query) or die("ERROR DE CONSULTA");
         ?>
 
-            <table class='table table-striped'>
-                <thead class='table-sky-blue'>
-                    <tr>
-                        <th>DNI</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Curso</th>
-                        <th>Especialidad</th>
-                        <th>Alta</th>
-                        <th>Eliminación</th>
-                        <th>Usuario Encargado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php while ($row = mysqli_fetch_array($result)) { ?>
+            <!-- Mostrar tabla de alumnos eliminados -->
+            <div class='container mt-4'>
+                <h3 class='text-center'>Alumnos Eliminados</h3>
+                <table class='table table-striped'>
+                    <thead>
                         <tr>
-                            <td><?php echo $row['DNI_alumno']; ?></td>
-                            <td><?php echo $row['nombre']; ?></td>
-                            <td><?php echo $row['apellido']; ?></td>
-                            <td><?php echo $row['curso']; ?></td>
-                            <td><?php echo $row['especialidad']; ?></td>
-                            <td><?php echo date('d-m-Y', strtotime($row['fechaAlta'])); ?></td>
-                            <td><?php echo $row['fechaEliminacion']; ?></td>
-                            <td><?php echo $row['usuarioEncargado']; ?></td>
-                            <td class="acciones">
-                                <form method="POST" action="eliminar-reinsertar.php" style="display:inline;">
-                                    <input type="hidden" name="alumno" value="<?php echo $row['ID']; ?>">
-                                    <button type="submit" class="btn-accion" onclick="return confirm('¿Está seguro de que desea reinsertar este alumno?');">
-                                        <img src="../Imagenes/return.png" alt="reinsertar" class="icono" width="24px">
-                                    </button>
-                                </form>
-                            </td>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Curso</th>
+                            <th>Fecha de Alta</th>
                         </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php while ($row = mysqli_fetch_array($result)) { ?>
+                            <tr>
+                                <td><?php echo $row['nombre']; ?></td>
+                                <td><?php echo $row['apellido']; ?></td>
+                                <td><?php echo $row['curso']; ?></td>
+                                <td><?php echo $row['fechaAlta']; ?></td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </div>
 
-
-
-        <?php } elseif ($status === '1') { ?>
-            <!-- Tabla de alumnos inactivos -->
-            
-            <table class='table table-striped'>
-                <thead class='table-sky-blue'>
-                    <tr>
-                        <th>DNI</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Curso</th>
-                        <th>Especialidad</th>
-                        <th>Alta</th>
-                        <th>Baja</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php while ($row = mysqli_fetch_array($result)) { ?>
+        <?php
+        } else {
+        ?>
+            <!-- Mostrar tabla de alumnos activos o inactivos -->
+            <div class='container mt-4'>
+                <table class='table table-striped'>
+                    <thead>
                         <tr>
-                            <td><?php echo $row['DNI_alumno']; ?></td>
-                            <td><?php echo $row['nombre']; ?></td>
-                            <td><?php echo $row['apellido']; ?></td>
-                            <td><?php echo $row['curso']; ?></td>
-                            <td><?php echo $row['especialidad']; ?></td>
-                            <td><?php echo date('d-m-Y', strtotime($row['fechaAlta'])); ?></td>
-                            <td><?php echo date('d-m-Y', strtotime($row['fechaBaja'])); ?></td>
-                            <td class="acciones">
-                                <a class="btn-accion" href="listar-modi-alumno.php?alumno=<?php echo $row['DNI_alumno']; ?>">
-                                    <img src="../SVG/lapiz.svg" alt="Modificar" class="icono" width="24px">
-                                </a>
-                                <form method="POST" action="listar-delete-alumno.php" style="display:inline;">
-                                    <input type="hidden" name="DNI" value="<?php echo $row['DNI_alumno']; ?>">
-                                    <button type="submit" class="btn-accion">
-                                        <img src="../SVG/si.svg" alt="Eliminar" class="icono">
-                                    </button>
-                                </form>
-                                <?php if (isset($row['tiene']) && $row['tiene'] > 0) { ?>
-                                    <a class="btn-accion" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">
-                                        <img src="../SVG/libro.svg" alt="Boletín" class="icono" width="24px">
-                                    </a>
-                                <?php } else { ?>
-                                    <a class="btn-accion" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">
-                                        <img src="../SVG/librovacio.svg" alt="Boletín" class="icono" width="24px">
-                                    </a>
-                                <?php } ?>
-                            </td>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Curso</th>
+                            <th>Especialidad</th>
+                            <th>Fecha de Alta</th>
+                            <th>Fecha de Baja</th>
                         </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
-        <?php } else { ?>
-            <!-- Tabla de alumnos activos -->
-            <table class='table table-striped'>
-                <thead class='table-sky-blue'>
-                    <tr>
-                        <th>DNI</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Curso</th>
-                        <th>Especialidad</th>
-                        <th>Alta</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Aquí se actualizarán los resultados con AJAX -->
-                    <?php while ($row = mysqli_fetch_array($result)) { ?>
-                        <tr>
-                            <td><?php echo $row['DNI_alumno']; ?></td>
-                            <td><?php echo $row['nombre']; ?></td>
-                            <td><?php echo $row['apellido']; ?></td>
-                            <td><?php echo $row['curso']; ?></td>
-                            <td><?php echo $row['especialidad']; ?></td>
-                            <td><?php echo date('d-m-Y', strtotime($row['fechaAlta'])); ?></td>
-                            <td class="acciones">
-                                <a class="btn-accion" href="listar-modi-alumno.php?alumno=<?php echo $row['DNI_alumno']; ?>">
-                                    <img src="../SVG/lapiz.svg" alt="Modificar" class="icono" width="24px">
-                                </a>
-                                <form method="POST" action="listar-delete-alumno.php" style="display:inline;">
-                                    <input type="hidden" name="DNI" value="<?php echo $row['DNI_alumno']; ?>">
-                                    <button type="submit" class="btn-accion">
-                                        <img src="../SVG/si.svg" alt="Eliminar" class="icono">
-                                    </button>
-                                </form>
-                                <?php if (isset($row['tiene']) && $row['tiene'] > 0) { ?>
-                                    <a class="btn-accion" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">
-                                        <img src="../SVG/libro.svg" alt="Boletín" class="icono" width="24px">
-                                    </a>
-                                    <a class="btn-accion" hidden href="buscarAlumno.php?alumno=libro.svg"> </a>
-                                <?php } else { ?>
-                                    <a class="btn-accion" href="vista-boletin.php?alumno=<?php echo $row['DNI_alumno']; ?>">
-                                        <img src="../SVG/librovacio.svg" alt="Boletín" class="icono" width="24px">
-                                    </a>
-                                    <a class="btn-accion" hidden href="buscarAlumno.php?alumno=librovacio.svg"> </a>
-                                <?php } ?>
-                            </td>
-                        </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php while ($row = mysqli_fetch_array($result)) { ?>
+                            <tr>
+                                <td><?php echo $row['nombre']; ?></td>
+                                <td><?php echo $row['apellido']; ?></td>
+                                <td><?php echo $row['curso']; ?></td>
+                                <td><?php echo $row['especialidad']; ?></td>
+                                <td><?php echo $row['fechaAlta']; ?></td>
+                                <td><?php echo $row['fechaBaja']; ?></td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </div>
 
-        <?php  } echo($status); ?>
-    
+        <?php } ?>
 
-        <nav aria-label='Paginación'>
+        <!-- Mostrar la paginación -->
+        <nav aria-label='Page navigation'>
             <ul class='pagination justify-content-center'>
                 <?php for ($i = 1; $i <= $total_paginas; $i++) { ?>
-                    <li class='page-item <?php echo $i == $pagina_actual ? 'active' : ''; ?>'>
-                        <a class='page-link' href="?pagina=<?php echo $i; ?>&orderBy=<?php echo $orderBy; ?>&status=<?php echo $status; ?>&curso=<?php echo $curso; ?>&search=<?php echo $search; ?>">
+                    <li class='page-item <?php if ($i == $pagina_actual) echo 'active'; ?>'>
+                        <a class='page-link' href='?pagina=<?php echo $i; ?>&orderBy=<?php echo $orderBy; ?>&status=<?php echo $status; ?>&curso=<?php echo $curso; ?>&search=<?php echo $search; ?>'>
                             <?php echo $i; ?>
                         </a>
                     </li>
                 <?php } ?>
             </ul>
         </nav>
-
     </div>
 
     <script>
-// Función que se llama en cada tecla presionada
-document.getElementById('searchInput').addEventListener('input', function() { 
-    console.log('Tecla presionada');
-    changeFilter(); 
-});
+        function changeFilter() {
+            var orderBy = document.getElementById('orderSelect').value;
+            var status = document.getElementById('statusSelect').value;
+            var curso = document.getElementById('cursoSelect').value;
+            var search = document.getElementById('searchInput').value;
 
-function changeFilter() {
-    const orderBy = document.getElementById('orderSelect').value;
-    const status = document.getElementById('statusSelect').value;
-    const curso = document.getElementById('cursoSelect').value;
-    const search = document.getElementById('searchInput').value;
+            window.location.href = '?orderBy=' + orderBy + '&status=' + status + '&curso=' + curso + '&search=' + search;
+        }
 
-    // Verificar los valores de los filtros
-    console.log(`Ordenar por: ${orderBy}, Estado: ${status}, Curso: ${curso}, Búsqueda: ${search}`);
-
-    // Crear la URL con los parámetros
-    const url = `?pagina=<?php echo $pagina_actual; ?>&orderBy=${orderBy}&status=${status}&curso=${curso}&search=${search}`;
-    console.log('URL generada:', url);
-
-    // Realizar solicitud AJAX
-    fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Error en la respuesta de la solicitud AJAX');
+        function handleSearchKeypress(event) {
+            if (event.key === 'Enter') {
+                changeFilter();
             }
-            return response.text();
-        })
-        .then(html => {
-            console.log('Respuesta recibida');
-            // Obtener el contenido de la tabla
-            const tableContent = new DOMParser().parseFromString(html, 'text/html').querySelector('table').outerHTML;
-            // Actualizar la tabla
-            document.querySelector('table').outerHTML = tableContent;
-        })
-        .catch(error => console.error('Error:', error));
-}
-</script>
+        }
+    </script>
 
-
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
