@@ -34,37 +34,45 @@
 
     $con = mysqli_connect($host, $user, $pwd, $BD) or die("FALLO DE CONEXION");
 
+    // Variables de filtrado
     $orderBy = isset($_GET['orderBy']) ? $_GET['orderBy'] : 'nombre';
-    $status = isset($_GET['status']) ? $_GET['status'] : '0'; // Default es alta (0)
+    $status = isset($_GET['status']) ? $_GET['status'] : '0'; // 0 = Activos (Alta), 1 = Inactivos (Baja)
     $especialidadFilter = isset($_GET['especialidad']) ? $_GET['especialidad'] : '';
+    $search = isset($_GET['search']) ? $_GET['search'] : '';
 
-    // Validación de columnas y estado
+    // Validación de columnas permitidas y estado
     $validColumns = ['nombre', 'apellido', 'especialidad', 'fechaAlta'];
     if (!in_array($orderBy, $validColumns)) {
         $orderBy = 'nombre';
     }
 
-    $validStatus = ['0', '1']; // 0 = Alta, 1 = Baja
+    $validStatus = ['0', '1'];
     if (!in_array($status, $validStatus)) {
         $status = '0';
     }
 
-    // Filtro de especialidad
+    // Filtro de especialidades
     $especialidadesQuery = "SELECT DISTINCT especialidad FROM profesor";
     $especialidadesResult = mysqli_query($con, $especialidadesQuery) or die("ERROR DE CONSULTA DE ESPECIALIDADES");
 
     $especialidadCondition = $especialidadFilter ? "AND especialidad = '$especialidadFilter'" : '';
+    $searchCondition = $search ? "AND (nombre LIKE '%$search%' OR apellido LIKE '%$search%')" : '';
 
     // Consulta principal
     $query = "SELECT DNI_profesor, nombre, apellido, especialidad, fechaAlta, fechaBaja
               FROM profesor
-              WHERE baja = $status $especialidadCondition
+              WHERE baja = $status $especialidadCondition $searchCondition
               ORDER BY $orderBy";
     $result = mysqli_query($con, $query) or die("ERROR DE CONSULTA");
     ?>
 
     <div class='container' style="margin-top: 20px;">
         <div class='row mb-3'>
+            <!-- Buscador -->
+            <div class='col-md-4'>
+                <label for='searchInput'>Buscar por nombre o apellido:</label>
+                <input type='text' id='searchInput' class='form-control' value="<?php echo $search; ?>" onkeyup='changeFilter()' placeholder="Buscar...">
+            </div>
             <div class='col-md-4'>
                 <label for='orderSelect'>Ordenar por:</label>
                 <select class='form-select' id='orderSelect' onchange='changeFilter()'>
@@ -138,7 +146,8 @@
             let orderBy = document.getElementById('orderSelect').value;
             let status = document.getElementById('statusSelect').value;
             let especialidad = document.getElementById('especialidadSelect').value;
-            window.location.href = `?orderBy=${orderBy}&status=${status}&especialidad=${especialidad}`;
+            let search = document.getElementById('searchInput').value;
+            window.location.href = `?orderBy=${orderBy}&status=${status}&especialidad=${especialidad}&search=${search}`;
         }
     </script>
 </body>

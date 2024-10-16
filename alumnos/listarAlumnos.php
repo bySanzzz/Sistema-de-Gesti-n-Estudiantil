@@ -347,13 +347,13 @@ $total_paginas = ceil($total_records / $limite);
 
             window.location.href = '?orderBy=' + orderBy + '&status=' + status + '&curso=' + curso + '&search=' + search;
         }
-
+        
         function handleSearchKeypress(event) {
             if (event.key === 'Enter') {
                 changeFilter();
             }
-        } 
-    </script>
+        }
+</script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
