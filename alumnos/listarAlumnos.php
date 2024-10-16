@@ -320,7 +320,7 @@ $total_paginas = ceil($total_records / $limite);
                 </tbody>
             </table>
 
-        <?php  }  ?>
+        <?php  }  // dale loco?>
     
 
 
@@ -352,7 +352,7 @@ $total_paginas = ceil($total_records / $limite);
             if (event.key === 'Enter') {
                 changeFilter();
             }
-        }
+        } 
     </script>
 
     <!-- Bootstrap JS -->
