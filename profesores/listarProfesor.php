@@ -5,7 +5,7 @@ $con = mysqli_connect($host, $user, $pwd, $BD) or die("FALLO DE CONEXION");
 
 //-----------------------------------------------------------------PAGINADO
 // Definir el número de resultados por página
-$limite = 8;
+$limite = 7;
 // Obtener la página actual desde la URL, si no se define, será la primera página
 $pagina_actual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 
@@ -178,10 +178,10 @@ $total_paginas = ceil($total_records / $limite);
                                     <td><?php echo $row['nombre']; ?></td>
                                     <td><?php echo $row['apellido']; ?></td>
                                     <td><?php echo $row['especialidad']; ?></td>
-                                    td><?php echo date('d-m-Y', strtotime($row['fechaAlta'])); ?></td>
+                                    <td><?php echo date('d-m-Y', strtotime($row['fechaAlta'])); ?></td>
                                     <td><?php echo $row['fechaEliminacion']; ?></td>
                                     <td><?php echo $row['usuarioEncargado']; ?></td>
-                                    <<td class="acciones">
+                                    <td class="acciones">
                                         <form method="POST" action="eliminar-reinsertar.php" style="display:inline;">
                                             <input type="hidden" name="profesor" value="<?php echo $row['ID']; ?>">
                                             <button type="submit" class="btn-accion" onclick="return confirm('¿Está seguro de que desea reinsertar este profesor?');">
@@ -288,8 +288,19 @@ $total_paginas = ceil($total_records / $limite);
                         <?php } ?>
                     </tbody>
                 </table>
-
-            <?php  }  // dale loco?>
+            <?php  }  // dale loco ?>
+            <!-- Mostrar la paginación -->
+            <nav aria-label='Page navigation'>
+                <ul class='pagination justify-content-center'>
+                    <?php for ($i = 1; $i <= $total_paginas; $i++) { ?>
+                        <li class='page-item <?php if ($i == $pagina_actual) echo 'active'; ?>'>
+                            <a class='page-link' href='?pagina=<?php echo $i; ?>&orderBy=<?php echo $orderBy; ?>&status=<?php echo $status; ?>&especialidad=<?php echo $especialidad; ?>&search=<?php echo $search; ?>'>
+                                <?php echo $i; ?>
+                            </a>
+                        </li>
+                    <?php } ?>
+                </ul>
+            </nav>
 
         </div>
 

@@ -320,7 +320,7 @@ $total_paginas = ceil($total_records / $limite);
                 </tbody>
             </table>
 
-        <?php  }  // dale loco?>
+        <?php  }  // dale loco ?>
     
 
 
