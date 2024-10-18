@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alumno/Alta</title>
+    <title>profesor/Alta</title>
     <link rel="stylesheet" href="../CSS/indexmodi.css">
     <link rel="stylesheet" href="../CSS/header.css">
 
@@ -55,7 +55,7 @@
             </div>
             <ul>
             <h2><li><a href="http://localhost:8080/escuela1/">Principal</a></li></h2>
-                <h2><li><a href="http://localhost:8080/escuela1/alumnos/listarAlumnos.php">Alumno</a></li></h2>
+                <h2><li><a href="http://localhost:8080/escuela1/profesors/listarprofesors.php">profesor</a></li></h2>
                 <h2><li><a class="nav" href="http://localhost:8080/escuela1/profesores/listarProfesor.php">Profesor</a></li></h2>
             </ul>
             </ul>
@@ -69,12 +69,34 @@
     <?php
 // Incluir archivo de conexión y controlador de profesor
 
-include("../Controladores/ProfesorControlador.php");
+include("../conexion.php");
+    $con = mysqli_connect($host, $user, $pwd, $BD) or die("FALLO DE CONEXION");
 
-$con = mysqli_connect($host, $user, $pwd, $BD) or die("FALLO DE CONEXION"); // Variables de conexión
+    $profesor = isset($_GET['profesor']) ? mysqli_real_escape_string($con, $_GET['profesor']) : null;
+    $mensaje_actualizacion = ""; // Variable para el mensaje de actualizacion
+    $mostrar_alerta = false; // Variable para controlar la visualización de SweetAlert
 
-$profesor = isset($_GET['profesor']) ? mysqli_real_escape_string($con, $_GET['profesor']) : null;
+	if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['modiDNI'])) {
+        // Verificar el valor de modiBaja
+        $baja = $_POST['modiBaja'] == "on" ? 0 : 1;
+        $fechaBaja = $baja == 1 ? date('Y-m-d') : NULL;
+    
+        $query_update = "UPDATE profesor SET
+            nombre = '$_POST[modiNombre]',
+            apellido = '$_POST[modiApellido]',
+            especialidad = '$_POST[modiEspecialidad]',
+            baja = '$baja',
+            fechaBaja = '$fechaBaja'
+        WHERE DNI_profesor = '$_POST[modiDNI]'";
+    
+        $resultado_update = mysqli_query($con, $query_update) or die("FALLO DE CONSULTA DE ACTUALIZACIoN");
 
+        // Si la actualización fue exitosa, cambiar la variable de alerta a true
+        if ($resultado_update) {
+            $mostrar_alerta = true; // Activar la alerta
+        }
+    }
+    
 if ($profesor) {
     // Obtener datos del profesor por DNI
     $query_select = "SELECT * FROM profesor WHERE DNI_profesor = '$profesor'";
@@ -91,8 +113,15 @@ if ($profesor) {
             Nombre: <input type="text" name="modiNombre" value="<?php echo($row['nombre']); ?>"> <br>
             Apellido: <input type="text" name="modiApellido" value="<?php echo($row['apellido']); ?>"> <br>
             Especialidad: <input type="text" name="modiEspecialidad" value="<?php echo($row['especialidad']); ?>"> <br>
-            
-            ¿Baja?: <input type="checkbox" name="modiBaja" <?php if ($row['baja'] == 1) echo 'checked'; ?>> <br>
+            <!-- segui comparando -->
+            <div class="form-check form-switch">
+                <input type="hidden" name="modiBaja" value="off"> <!-- Campo oculto para enviar el valor "off" si no se marca el checkbox -->
+                <input type="checkbox" class="form-check-input" id="modiBaja" name="modiBaja" 
+                    <?php echo ($row['baja'] == 0) ? 'checked' : ''; ?> onchange="updateLabel(this)">
+                <label class="form-check-label" for="modiBaja" id="bajaLabel">
+                    <?php echo ($row['baja'] == 0) ? 'Activo' : 'Inactivo'; ?>
+                </label>
+            </div>
 
             <input type="submit" value="Actualizar">
         </form>
@@ -106,7 +135,7 @@ if ($profesor) {
         echo "No se encontró ningún profesor con ese DNI.";
         ?>
         <h3>Ver listado de profesores</h3>
-        <a href="../alumnos/listarProfesor.php"><button>LISTAR</button></a>
+        <a href="../profesors/listarProfesor.php"><button>LISTAR</button></a>
         <?php
     }
 } else {

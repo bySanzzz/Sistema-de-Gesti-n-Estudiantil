@@ -69,7 +69,8 @@ function actualizarProfesor(){
 	// Verificar si se ha enviado el formulario para la actualizacion
 	if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['modiDNI'])) {
 		// Actualizar los datos
-		$baja = isset($_POST['modiBaja']) ? 1 : 0; // Baja sera 1 si esta seleccionada, de lo contrario 0
+		// Verificar el valor de modiBaja
+		$baja = $_POST['modiBaja'] == "on" ? 0 : 1;
 		$fechaBaja = $baja == 1 ? date('Y-m-d') : NULL; // Si el alumno esta de baja, asigna la fecha actual
 
 		$query_update = "UPDATE profesor SET
